@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Year 9 Science Quiz</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f5f3; --bg3: #eeece8;
+    --text: #1a1a18; --text2: #5a5a56; --text3: #9a9a94;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --blue-bg: #e6f1fb; --blue-border: #b5d4f4; --blue-text: #0c447c;
+    --green-bg: #eaf3de; --green-border: #c0dd97; --green-text: #3b6d11;
+    --red-bg: #fcebeb; --red-border: #f7c1c1; --red-text: #791f1f;
+    --amber-bg: #faeeda; --amber-border: #fac775; --amber-text: #633806;
+    --radius: 10px; --radius-sm: 6px;
+  }
+  body { font-family: Georgia, 'Times New Roman', serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
+  .shell { max-width: 780px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+  /* Header */
+  .site-header { text-align: center; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid var(--border); }
+  .site-header h1 { font-size: 28px; font-weight: normal; letter-spacing: -0.5px; color: var(--text); }
+  .site-header p { font-size: 14px; color: var(--text2); margin-top: 6px; font-family: system-ui, sans-serif; }
+  .badge-row { display: flex; justify-content: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .badge { font-family: system-ui, sans-serif; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 0.5px solid var(--border2); color: var(--text2); background: var(--bg); }
+
+  /* Progress */
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-meta { display: flex; justify-content: space-between; font-family: system-ui, sans-serif; font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+  .prog-bar { height: 3px; background: var(--border); border-radius: 2px; }
+  .prog-fill { height: 3px; background: var(--text2); border-radius: 2px; transition: width 0.4s ease; }
+
+  /* Topic heading */
+  .topic-label { font-family: system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin: 2rem 0 0.75rem; }
+  .topic-label:first-of-type { margin-top: 0; }
+
+  /* Question card */
+  .qcard { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 0.75rem; }
+  .qnum { font-family: system-ui, sans-serif; font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+  .qtext { font-size: 15px; line-height: 1.6; color: var(--text); margin-bottom: 10px; }
+  .hint { font-family: system-ui, sans-serif; font-size: 12px; color: var(--text3); font-style: italic; margin-bottom: 12px; }
+  .options { display: flex; flex-direction: column; gap: 7px; }
+  .opt { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: background 0.12s, border-color 0.12s; font-family: system-ui, sans-serif; font-size: 13.5px; color: var(--text); }
+  .opt:hover { background: var(--bg2); border-color: var(--border2); }
+  .opt.selected { background: var(--blue-bg); border-color: var(--blue-border); color: var(--blue-text); }
+  .opt.correct  { background: var(--green-bg); border-color: var(--green-border); color: var(--green-text); }
+  .opt.wrong    { background: var(--red-bg); border-color: var(--red-border); color: var(--red-text); }
+  .opt.missed   { background: var(--amber-bg); border-color: var(--amber-border); color: var(--amber-text); }
+  .opt.disabled { cursor: default; }
+  .cb { width: 16px; height: 16px; border: 1.5px solid var(--border2); border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+  .opt.selected .cb { background: var(--blue-text); border-color: var(--blue-text); color: #fff; }
+  .opt.correct  .cb { background: var(--green-text); border-color: var(--green-text); color: #fff; }
+  .opt.wrong    .cb { background: var(--red-text); border-color: var(--red-text); color: #fff; }
+  .opt.missed   .cb { background: var(--amber-text); border-color: var(--amber-text); color: #fff; }
+  .check-btn { margin-top: 12px; font-family: system-ui, sans-serif; font-size: 12px; padding: 6px 14px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); background: transparent; cursor: pointer; color: var(--text2); transition: background 0.12s; }
+  .check-btn:hover { background: var(--bg2); }
+  .check-btn.done { opacity: 0.4; cursor: default; }
+
+  /* Controls */
+  .controls { position: sticky; bottom: 0; background: rgba(238,236,232,0.95); backdrop-filter: blur(8px); border-top: 0.5px solid var(--border); padding: 1rem 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 2rem; }
+  .score-display { font-family: system-ui, sans-serif; font-size: 13px; color: var(--text2); }
+  .score-display strong { color: var(--text); font-size: 16px; }
+  .btn { font-family: system-ui, sans-serif; font-size: 13px; padding: 8px 18px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); background: var(--bg); cursor: pointer; color: var(--text); transition: background 0.12s; }
+  .btn:hover { background: var(--bg2); }
+  .btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn.primary:hover { opacity: 0.8; }
+
+  /* Results banner */
+  .results-banner { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 2rem; text-align: center; margin-bottom: 2rem; }
+  .results-banner .pct { font-size: 56px; font-weight: normal; }
+  .results-banner .msg { font-family: system-ui, sans-serif; font-size: 14px; color: var(--text2); margin-top: 6px; }
+  .results-banner .breakdown { display: flex; justify-content: center; gap: 24px; margin-top: 1rem; }
+  .results-banner .stat { font-family: system-ui, sans-serif; font-size: 12px; color: var(--text3); }
+  .results-banner .stat strong { display: block; font-size: 18px; color: var(--text); }
+
+  @media (max-width: 500px) { .shell { padding: 1rem 0.75rem 3rem; } .qtext { font-size: 14px; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="site-header">
+    <h1>Year 9 Science Quiz</h1>
+    <p>Select all correct answers, then check each question</p>
+    <div class="badge-row">
+      <span class="badge">104 questions</span>
+      <span class="badge">Multi-select</span>
+      <span class="badge">10 topics</span>
+      <span class="badge">Age 13+</span>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="prog-label">0 of 104 checked</span>
+      <span id="score-label">Score: 0%</span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="quiz-root"></div>
+
+  <div class="controls">
+    <div class="score-display">Score: <strong id="live-score">—</strong></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn" onclick="checkAll()">Check all</button>
+      <button class="btn primary" onclick="resetAll()">Retake quiz</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+  // ── LAB SAFETY & HAZARDS ──────────────────────────────────────────────────
+  {topic:"Lab safety & hazards",q:"Which of the following are correct safety precautions when working in a science lab?",hint:"Think about protecting your body and your workspace.",options:["Wear safety goggles when heating substances","Tie long hair back","Point test tubes away from people when heating","Keep bags on the lab benches","Taste unknown chemicals to identify them","Wash hands after handling chemicals"],correct:[0,1,2,5]},
+  {topic:"Lab safety & hazards",q:"Which hazard symbols would you expect to see on a bottle of concentrated hydrochloric acid?",hint:"Strong acids can burn skin and release fumes.",options:["Corrosive","Flammable","Toxic","Oxidising","Environmental hazard","Irritant"],correct:[0,2,5]},
+  {topic:"Lab safety & hazards",q:"Which of the following describe what you should do if a chemical spills on your skin?",hint:"Speed is important when dealing with chemical spills.",options:["Run the affected area under cold water immediately","Tell the teacher straight away","Wipe it off with a paper towel and carry on","Remove contaminated clothing if safe to do so","Apply a bandage to the area","Rinse for at least 10 minutes"],correct:[0,1,3,5]},
+  {topic:"Lab safety & hazards",q:"Which pieces of personal protective equipment (PPE) are typically used in a school science lab?",hint:"PPE protects different parts of your body.",options:["Safety goggles","Lab coat","Gloves when handling hazardous materials","Hard hat","Steel-toed boots","Face shield for very hazardous work"],correct:[0,1,2,5]},
+
+  // ── EQUIPMENT ─────────────────────────────────────────────────────────────
+  {topic:"Lab equipment",q:"Which pieces of equipment are used to accurately measure the volume of a liquid?",hint:"Think about which items have volume markings.",options:["Measuring cylinder","Beaker","Burette","Conical flask","Pipette","Evaporating basin"],correct:[0,2,4]},
+  {topic:"Lab equipment",q:"A student wants to filter a mixture of sand and water. Which equipment do they need?",hint:"Filtration separates an insoluble solid from a liquid.",options:["Filter paper","Funnel","Conical flask","Bunsen burner","Tripod","Glass rod"],correct:[0,1,2,5]},
+  {topic:"Lab equipment",q:"Which statements about a Bunsen burner flame are correct?",hint:"The air hole controls which type of flame is produced.",options:["The blue flame is hotter than the yellow flame","The yellow flame is called the safety flame","Opening the air hole fully produces the blue flame","The yellow flame is used for heating","The blue flame is sometimes called the roaring flame","Closing the air hole produces the blue flame"],correct:[0,1,2,4]},
+  {topic:"Lab equipment",q:"Which of the following are used to measure mass in a science lab?",hint:"Mass is different from weight.",options:["Top-pan balance","Measuring cylinder","Newton meter","Electronic balance","Triple beam balance","Thermometer"],correct:[0,3,4]},
+
+  // ── CELLS & CELL STRUCTURE ────────────────────────────────────────────────
+  {topic:"Cells & cell structure",q:"Which of the following structures are found in BOTH plant and animal cells?",hint:"Think about what all living cells need to function.",options:["Cell membrane","Cell wall","Nucleus","Chloroplasts","Mitochondria","Cytoplasm"],correct:[0,2,4,5]},
+  {topic:"Cells & cell structure",q:"Which structures are found in plant cells but NOT in animal cells?",hint:"Plants make their own food and have a rigid shape.",options:["Chloroplasts","Large permanent vacuole","Cell wall made of cellulose","Mitochondria","Nucleus","Ribosomes"],correct:[0,1,2]},
+  {topic:"Cells & cell structure",q:"Which of the following correctly describe the function of the mitochondria?",hint:"Think about where energy is released in cells.",options:["Site of aerobic respiration","Releases energy from glucose","Found in both plant and animal cells","Produces proteins","Contains chlorophyll","Can be more numerous in active muscle cells"],correct:[0,1,2,5]},
+  {topic:"Cells & cell structure",q:"Which statements about the nucleus are correct?",hint:"The nucleus controls the cell's activities.",options:["It contains DNA","It controls what the cell does","It is surrounded by a nuclear membrane","It is found in all cells including bacteria","It contains chromosomes","It is the site of photosynthesis"],correct:[0,1,2,4]},
+  {topic:"Cells & cell structure",q:"Which of the following are examples of specialised animal cells?",hint:"Specialised cells have adaptations for a specific job.",options:["Red blood cells","Root hair cells","Sperm cells","Nerve cells","Guard cells","Palisade cells"],correct:[0,2,3]},
+  {topic:"Cells & cell structure",q:"Which statements correctly describe how substances move into and out of cells?",hint:"Think about concentration gradients and cell membranes.",options:["Diffusion moves substances from high to low concentration","Osmosis is the movement of water through a partially permeable membrane","Active transport requires energy","Diffusion requires no energy","Osmosis moves substances against a concentration gradient","Active transport moves substances from high to low concentration"],correct:[0,1,2,3]},
+  {topic:"Cells & cell structure",q:"Which of the following are correct descriptions of prokaryotic cells?",hint:"Bacteria are prokaryotes — they are simpler than animal or plant cells.",options:["They have no membrane-bound nucleus","They are smaller than eukaryotic cells","They have a cell wall","They contain mitochondria","They have a circular chromosome","They are found in animals"],correct:[0,1,2,4]},
+  {topic:"Cells & cell structure",q:"Which of the following are functions of the cell membrane?",hint:"The membrane controls what enters and leaves the cell.",options:["Controls what enters and leaves the cell","Provides strength and rigidity","Allows diffusion of small molecules","Site of photosynthesis","Separates cell contents from the environment","Allows selective transport of substances"],correct:[0,2,4,5]},
+
+  // ── PERIODIC TABLE & ELEMENTS ─────────────────────────────────────────────
+  {topic:"The periodic table",q:"Which of the following statements about the periodic table are correct?",hint:"The periodic table is organised by atomic number.",options:["Elements are arranged in order of increasing atomic number","Elements in the same group have similar chemical properties","Periods go across the table","Groups go across the table","Metals are generally on the right side","Non-metals are generally on the right side"],correct:[0,1,2,5]},
+  {topic:"The periodic table",q:"Which of the following are properties of metals?",hint:"Think about how metals look and how they conduct things.",options:["Good conductors of electricity","Shiny when freshly cut","Generally brittle","High melting points","Low density","Malleable (can be bent and shaped)"],correct:[0,1,3,5]},
+  {topic:"The periodic table",q:"Which elements are in Group 1 of the periodic table?",hint:"Group 1 elements are called the alkali metals.",options:["Lithium","Sodium","Calcium","Potassium","Magnesium","Francium"],correct:[0,1,3,5]},
+  {topic:"The periodic table",q:"Which of the following are correct statements about noble gases (Group 0)?",hint:"Noble gases are very unreactive.",options:["They have a full outer electron shell","They are very unreactive","They are all diatomic molecules","They exist as single atoms","Helium is used in balloons","They easily form compounds with other elements"],correct:[0,1,3,4]},
+  {topic:"The periodic table",q:"Which statements about atomic structure are correct?",hint:"Atoms have a nucleus surrounded by electrons.",options:["Protons have a positive charge","Neutrons have no charge","Electrons are found in the nucleus","The nucleus contains protons and neutrons","Electrons have a negative charge","Atoms have more protons than electrons"],correct:[0,1,3,4]},
+  {topic:"The periodic table",q:"Which of the following are properties of non-metals?",hint:"Non-metals are very different from metals in their properties.",options:["Poor conductors of electricity","Often have low melting points","Generally dull in appearance","Malleable and ductile","Poor conductors of heat","Always exist as gases at room temperature"],correct:[0,1,2,4]},
+  {topic:"The periodic table",q:"Which of the following statements about Group 7 (halogens) are correct?",hint:"Halogens are reactive non-metals.",options:["They become less reactive going down the group","Fluorine is more reactive than chlorine","They form salts when reacting with metals","They exist as diatomic molecules","Chlorine is a green gas","Iodine is a shiny grey solid at room temperature"],correct:[1,2,3,4,5]},
+  {topic:"The periodic table",q:"Which of the following correctly describe isotopes?",hint:"Isotopes are atoms of the same element with different masses.",options:["Isotopes have the same number of protons","Isotopes have different numbers of neutrons","Isotopes are atoms of different elements","Isotopes have the same atomic number","Isotopes have the same chemical properties","Isotopes always have different mass numbers"],correct:[0,1,3,4,5]},
+
+  // ── FORCES & MOTION ───────────────────────────────────────────────────────
+  {topic:"Forces & motion",q:"Which of the following are contact forces?",hint:"Contact forces require objects to be touching.",options:["Friction","Gravity","Normal reaction force","Magnetic force","Air resistance","Tension"],correct:[0,2,4,5]},
+  {topic:"Forces & motion",q:"Which statements about gravity are correct?",hint:"Gravity is the force of attraction between masses.",options:["Gravity pulls objects towards the centre of the Earth","Weight is the force due to gravity","Mass and weight are the same thing","Gravity decreases as you move further from Earth","Objects fall at the same speed regardless of mass in a vacuum","The unit of weight is the Newton"],correct:[0,1,3,4,5]},
+  {topic:"Forces & motion",q:"A car travels at a constant speed. Which of the following must be true?",hint:"Think about balanced and unbalanced forces.",options:["The driving force equals the friction force","The forces are balanced","The car is accelerating","The resultant force is zero","The car has no forces acting on it","The car has the same velocity throughout"],correct:[0,1,3,5]},
+  {topic:"Forces & motion",q:"Which of the following correctly describe Newton's First Law of Motion?",hint:"Newton's First Law is about what happens when forces are balanced.",options:["An object at rest stays at rest unless acted on by a force","An object moving at constant velocity has balanced forces","An object accelerates when an unbalanced force acts on it","Force equals mass times acceleration","A moving object will keep moving at the same speed and direction unless a force acts","Objects naturally slow down without any force"],correct:[0,1,4]},
+  {topic:"Forces & motion",q:"Which of the following correctly describe speed and velocity?",hint:"Speed and velocity are related but not the same thing.",options:["Speed is a scalar quantity","Velocity includes direction","Speed = distance ÷ time","Velocity is always equal to speed","A car going round a roundabout at constant speed has changing velocity","Speed and velocity always have the same value"],correct:[0,1,2,4]},
+  {topic:"Forces & motion",q:"Which of the following affect the stopping distance of a car?",hint:"Stopping distance = thinking distance + braking distance.",options:["Speed of the car","Road conditions (wet or dry)","Condition of the tyres","Colour of the car","Reaction time of the driver","Mass of the car"],correct:[0,1,2,4,5]},
+  {topic:"Forces & motion",q:"Which statements about pressure are correct?",hint:"Pressure depends on force and the area it acts over.",options:["Pressure = force ÷ area","Pressure is measured in Pascals (Pa)","A smaller area produces a higher pressure for the same force","Increasing the area decreases pressure","Pressure increases with depth in a fluid","A larger area always produces higher pressure"],correct:[0,1,2,3,4]},
+  {topic:"Forces & motion",q:"Which of the following are examples of Newton's Third Law (action and reaction pairs)?",hint:"For every action there is an equal and opposite reaction.",options:["A rocket pushes gas backwards and the gas pushes the rocket forwards","A swimmer pushes water backwards and moves forwards","A book sits on a table and the table pushes the book up","Gravity pulls you down and the ground pushes you up","A car accelerates when the engine force exceeds friction","A skater pushes off a wall and moves away from it"],correct:[0,1,2,3,5]},
+
+  // ── HUMAN BODY SYSTEMS ────────────────────────────────────────────────────
+  {topic:"Human body systems",q:"Which of the following are functions of the circulatory system?",hint:"The heart is the pump of the circulatory system.",options:["Transporting oxygen to cells","Removing carbon dioxide from cells","Breaking down food into nutrients","Transporting hormones around the body","Fighting infection","Distributing heat around the body"],correct:[0,1,3,5]},
+  {topic:"Human body systems",q:"Which of the following correctly describe the structure or function of the heart?",hint:"The heart has four chambers.",options:["The heart has four chambers","The left side of the heart pumps blood to the lungs","The right side of the heart pumps blood to the body","Valves in the heart prevent blood flowing backwards","The aorta carries oxygenated blood away from the heart","The pulmonary vein carries oxygenated blood from the lungs"],correct:[0,3,4,5]},
+  {topic:"Human body systems",q:"Which of the following are correct statements about blood?",hint:"Blood contains several different components.",options:["Red blood cells carry oxygen","White blood cells fight infection","Platelets help blood to clot","Plasma carries dissolved substances","Red blood cells have a nucleus","Blood is made in bone marrow"],correct:[0,1,2,3,5]},
+  {topic:"Human body systems",q:"Which of the following correctly describe the digestive system?",hint:"Digestion breaks food into small molecules that can be absorbed.",options:["Enzymes break down large food molecules","The stomach produces acid to kill bacteria","The small intestine absorbs nutrients into the blood","The large intestine produces digestive enzymes","Bile is produced by the liver","The mouth produces amylase to digest starch"],correct:[0,1,2,4,5]},
+  {topic:"Human body systems",q:"Which statements about the respiratory system are correct?",hint:"The respiratory system allows gas exchange.",options:["Oxygen moves from the alveoli into the blood","Carbon dioxide moves from the blood into the alveoli","The diaphragm contracts during inhalation","The trachea carries air to the lungs","Gas exchange happens in the bronchi","Alveoli have a large surface area to aid gas exchange"],correct:[0,1,2,3,5]},
+  {topic:"Human body systems",q:"Which of the following are features of the alveoli that make them efficient for gas exchange?",hint:"Efficient gas exchange requires maximum contact between air and blood.",options:["Large surface area","Thin walls","Good blood supply","Located outside the lungs","Moist surfaces","Thick walls to protect them"],correct:[0,1,2,4]},
+  {topic:"Human body systems",q:"Which of the following are parts of the skeletal system and their correct functions?",hint:"The skeleton does more than just support the body.",options:["Bones protect internal organs","Muscles are attached to bones to allow movement","Red blood cells are made in bone marrow","The skeleton produces hormones","Joints allow bones to move","Cartilage cushions joints"],correct:[0,1,2,4,5]},
+  {topic:"Human body systems",q:"Which of the following correctly describe the nervous system?",hint:"The nervous system detects and responds to stimuli.",options:["Neurons carry electrical signals","Sensory neurons carry signals from receptors to the brain","Motor neurons carry signals from the brain to effectors","The spinal cord is part of the peripheral nervous system","Synapses are gaps between neurons","Reflex actions involve the brain directly"],correct:[0,1,2,4]},
+
+  // ── STATES OF MATTER ──────────────────────────────────────────────────────
+  {topic:"States of matter",q:"Which of the following correctly describe the properties of a solid?",hint:"Think about how particles are arranged in a solid.",options:["Fixed shape","Fixed volume","Cannot be compressed","Particles vibrate in fixed positions","Particles move freely and randomly","Flows easily"],correct:[0,1,2,3]},
+  {topic:"States of matter",q:"Which changes of state release energy to the surroundings?",hint:"Some changes of state release energy, others absorb it.",options:["Condensation","Freezing","Evaporation","Melting","Sublimation of iodine vapour back to solid","Deposition (gas directly to solid)"],correct:[0,1,5]},
+  {topic:"States of matter",q:"Which of the following correctly describe evaporation?",hint:"Evaporation is different from boiling.",options:["It occurs at the surface of a liquid","It can happen below the boiling point","Faster-moving particles escape from the surface","It only occurs at the boiling point","It causes the remaining liquid to cool","It requires a heat source"],correct:[0,1,2,4]},
+  {topic:"States of matter",q:"Which of the following are correct statements about particle theory?",hint:"Particle theory explains the properties of solids, liquids and gases.",options:["All matter is made of tiny particles","Particles in a gas are far apart","Particles in a liquid can move past each other","Particles in a solid have no energy","The speed of particles increases with temperature","Gases have a fixed volume"],correct:[0,1,2,4]},
+  {topic:"States of matter",q:"Which of the following correctly describe what happens when a substance melts?",hint:"Melting changes a solid into a liquid.",options:["Energy is absorbed","Particles gain energy and vibrate more","Bonds between particles are overcome","The temperature stays constant during melting of a pure substance","The mass of the substance increases","Particles begin to move past each other"],correct:[0,1,2,3,5]},
+  {topic:"States of matter",q:"Which of the following are correct about mixtures and pure substances?",hint:"A pure substance has a sharp melting point.",options:["A pure substance melts at a precise temperature","Mixtures melt over a range of temperatures","Dissolving a solid in water creates a mixture","Filtering separates all mixtures","Pure water boils at exactly 100°C at standard pressure","Salt water is a mixture"],correct:[0,1,2,4,5]},
+  {topic:"States of matter",q:"Which of the following separation techniques match their correct use?",hint:"Different methods separate mixtures in different ways.",options:["Filtration separates an insoluble solid from a liquid","Distillation separates a dissolved solid from a solvent","Chromatography separates mixtures of dyes","Evaporation recovers a dissolved solid by removing the solvent","Decanting separates two liquids of different densities","Crystallisation is used to obtain a pure solid from a solution"],correct:[0,2,3,5]},
+  {topic:"States of matter",q:"Which of the following correctly describe the properties of gases?",hint:"Gases behave very differently from solids and liquids.",options:["Gases fill the container they are in","Gases can be compressed","Gas particles move quickly and randomly","Gases have a fixed shape","Gases have low density compared to solids","Gas pressure increases when the gas is compressed into a smaller volume"],correct:[0,1,2,4,5]},
+
+  // ── ACIDS, ALKALIS & pH ───────────────────────────────────────────────────
+  {topic:"Acids, alkalis & pH",q:"Which of the following are correct statements about the pH scale?",hint:"The pH scale runs from 0 to 14.",options:["A pH of 7 is neutral","Acids have a pH below 7","Alkalis have a pH above 7","A pH of 1 is a weak acid","Lemon juice has a pH below 7","Pure water has a pH of 7"],correct:[0,1,2,4,5]},
+  {topic:"Acids, alkalis & pH",q:"Which of the following are indicators and what colour do they turn in acid?",hint:"Indicators change colour depending on pH.",options:["Litmus turns red in acid","Universal indicator turns red/orange in acid","Phenolphthalein turns pink in acid","Methyl orange turns red in acid","Litmus turns blue in acid","Universal indicator turns purple in neutral solution"],correct:[0,1,3]},
+  {topic:"Acids, alkalis & pH",q:"Which of the following are products of a neutralisation reaction between an acid and an alkali?",hint:"Neutralisation produces a salt and water.",options:["Salt","Water","Carbon dioxide","A neutral solution","Hydrogen gas","An oxide"],correct:[0,1,3]},
+  {topic:"Acids, alkalis & pH",q:"Which of the following are examples of common acids?",hint:"Some acids are found in everyday foods.",options:["Hydrochloric acid","Sulfuric acid","Sodium hydroxide","Citric acid","Ethanoic acid (vinegar)","Calcium hydroxide"],correct:[0,1,3,4]},
+  {topic:"Acids, alkalis & pH",q:"Which of the following correctly describe what happens when a metal reacts with an acid?",hint:"Metals react with acids to produce a gas.",options:["A salt is produced","Hydrogen gas is produced","Carbon dioxide is produced","The reaction is exothermic","The metal dissolves","Water is always produced"],correct:[0,1,3,4]},
+  {topic:"Acids, alkalis & pH",q:"Which of the following are correct about metal oxides reacting with acids?",hint:"Metal oxides are bases.",options:["Metal oxides are bases","They react with acids in a neutralisation reaction","A salt and water are produced","Hydrogen gas is produced","The reaction is always endothermic","Copper oxide reacts with hydrochloric acid to form copper chloride"],correct:[0,1,2,5]},
+  {topic:"Acids, alkalis & pH",q:"Which of the following correctly describe the properties of alkalis?",hint:"Alkalis are soluble bases.",options:["Alkalis have a pH above 7","Alkalis feel soapy","Alkalis turn litmus blue","Alkalis are the same as bases","Common alkalis include sodium hydroxide and ammonia","Alkalis turn universal indicator red"],correct:[0,1,2,4]},
+  {topic:"Acids, alkalis & pH",q:"Which statements about carbonates reacting with acids are correct?",hint:"Carbonates fizz when they react with acids.",options:["Carbon dioxide gas is produced","A salt is produced","Water is produced","Hydrogen gas is produced","The test for the gas is limewater turning cloudy","Carbonates are alkalis"],correct:[0,1,2,4]},
+
+  // ── ELECTRICITY & CIRCUITS ────────────────────────────────────────────────
+  {topic:"Electricity & circuits",q:"Which of the following are correct about series circuits?",hint:"In a series circuit there is only one path for current.",options:["Current is the same at all points","If one bulb breaks, the circuit stops working","Voltage is shared between components","Adding more bulbs makes each one dimmer","Removing one component breaks the whole circuit","Current splits at junctions"],correct:[0,1,2,3,4]},
+  {topic:"Electricity & circuits",q:"Which of the following are correct about parallel circuits?",hint:"In a parallel circuit there are multiple paths for current.",options:["Each branch has the same voltage across it","If one bulb breaks, others continue to work","Current splits at junctions","Adding more branches decreases the total current","Components share the voltage","Household appliances are connected in parallel"],correct:[0,1,2,5]},
+  {topic:"Electricity & circuits",q:"Which of the following correctly describe electrical resistance?",hint:"Resistance opposes the flow of current.",options:["Resistance is measured in Ohms (Ω)","A longer wire has greater resistance","A thicker wire has greater resistance","Resistance = Voltage ÷ Current","Temperature affects resistance in some materials","A thinner wire has less resistance"],correct:[0,1,3,4]},
+  {topic:"Electricity & circuits",q:"Which of the following are correct about current, voltage and power?",hint:"Think about the equations connecting these quantities.",options:["Current is measured in Amperes (A)","Voltage is measured in Volts (V)","Power = Voltage × Current","Power is measured in Watts (W)","Current = Charge ÷ Time","Voltage is also called current"],correct:[0,1,2,3,4]},
+  {topic:"Electricity & circuits",q:"Which of the following are examples of electrical conductors?",hint:"Conductors allow electricity to flow through them.",options:["Copper","Aluminium","Rubber","Graphite","Plastic","Silver"],correct:[0,1,3,5]},
+  {topic:"Electricity & circuits",q:"Which of the following correctly describe static electricity?",hint:"Static electricity builds up on insulators.",options:["Static electricity builds up on insulating materials","Opposite charges attract each other","Like charges repel each other","Static can cause a spark","Metals hold static charge well","Rubbing insulating materials can cause them to become charged"],correct:[0,1,2,3,5]},
+  {topic:"Electricity & circuits",q:"Which of the following are correct circuit symbols and their components?",hint:"You need to recognise standard circuit symbols.",options:["A circle with a cross represents a lamp","An arrow with a bar represents a battery","A zigzag line represents a resistor","A circle with an arrow represents an ammeter","Two long and two short lines represent a battery","A circle with a V represents a voltmeter"],correct:[0,2,4,5]},
+  {topic:"Electricity & circuits",q:"Which of the following correctly describe how an ammeter and voltmeter are used?",hint:"The two meters are connected in different ways.",options:["An ammeter is connected in series","A voltmeter is connected in parallel","An ammeter measures current in Amps","A voltmeter measures voltage in Volts","A voltmeter is connected in series","An ammeter has very high resistance"],correct:[0,1,2,3]},
+
+  // ── LIGHT & SOUND ─────────────────────────────────────────────────────────
+  {topic:"Light & sound",q:"Which of the following are correct about the reflection of light?",hint:"Light bounces off surfaces according to the law of reflection.",options:["The angle of incidence equals the angle of reflection","Angles are measured from the normal","A plane mirror produces a virtual image","The reflected image in a plane mirror is the same size as the object","Light reflects off all surfaces","The image in a plane mirror is in front of the mirror"],correct:[0,1,2,3]},
+  {topic:"Light & sound",q:"Which of the following correctly describe refraction of light?",hint:"Refraction happens when light changes speed.",options:["Light bends when it crosses a boundary between materials","Light slows down when entering glass from air","Light bends towards the normal when it slows down","Light always bends away from the normal","Refraction can cause optical illusions","Total internal reflection is related to refraction"],correct:[0,1,2,4,5]},
+  {topic:"Light & sound",q:"Which of the following are correct about the electromagnetic spectrum?",hint:"Visible light is just one part of the electromagnetic spectrum.",options:["All electromagnetic waves travel at the same speed in a vacuum","Radio waves have the longest wavelength","Gamma rays have the highest frequency","Ultraviolet radiation can cause sunburn","X-rays are used in medicine","Microwaves are a type of sound wave"],correct:[0,1,2,3,4]},
+  {topic:"Light & sound",q:"Which of the following correctly describe properties of sound waves?",hint:"Sound is a mechanical wave.",options:["Sound is a longitudinal wave","Sound requires a medium to travel","Sound travels faster in solids than in air","Sound cannot travel through a vacuum","Sound travels at the same speed as light","The frequency of a sound wave determines its pitch"],correct:[0,1,2,3,5]},
+  {topic:"Light & sound",q:"Which of the following are correct about the colour of light?",hint:"White light is a mixture of colours.",options:["White light can be split into a spectrum using a prism","Red light has the longest wavelength in the visible spectrum","Violet light has the highest frequency in the visible spectrum","A red object reflects red light and absorbs others","A blue filter only lets blue light through","Green light has a longer wavelength than red light"],correct:[0,1,2,3,4]},
+  {topic:"Light & sound",q:"Which of the following are ways in which light and sound are similar?",hint:"Despite their differences, light and sound share some wave properties.",options:["Both can be reflected","Both travel as waves","Both can be refracted","Both require a medium to travel","Both carry energy","Both travel at the same speed"],correct:[0,1,2,4]},
+  {topic:"Light & sound",q:"Which of the following correctly describe the properties of waves?",hint:"All waves share certain measurable properties.",options:["Wavelength is the distance between two adjacent peaks","Frequency is the number of waves per second","Amplitude is the maximum displacement from rest","Wave speed = frequency × wavelength","A higher amplitude means a louder sound","A higher frequency means a lower pitch"],correct:[0,1,2,3,4]},
+  {topic:"Light & sound",q:"Which of the following are correct uses of different parts of the electromagnetic spectrum?",hint:"Different types of EM radiation have different uses.",options:["Radio waves are used for broadcasting","Infrared is used in remote controls","Ultraviolet is used to sterilise water","Gamma rays are used to detect broken bones","Microwaves are used in cooking","X-rays are used in airport security scanners"],correct:[0,1,2,4,5]},
+
+  // ── REPRODUCTION & GENETICS ───────────────────────────────────────────────
+  {topic:"Reproduction & genetics",q:"Which of the following are correct about sexual reproduction?",hint:"Sexual reproduction involves two parents.",options:["It involves the fusion of male and female gametes","It produces offspring that are genetically different from parents","It requires two parents","It is faster than asexual reproduction","Fertilisation produces a zygote","Offspring show variation"],correct:[0,1,2,4,5]},
+  {topic:"Reproduction & genetics",q:"Which of the following are correct about asexual reproduction?",hint:"Asexual reproduction involves only one parent.",options:["Only one parent is needed","Offspring are genetically identical to the parent","It produces clones","It is used by bacteria","It is slower than sexual reproduction","It requires the fusion of gametes"],correct:[0,1,2,3]},
+  {topic:"Reproduction & genetics",q:"Which of the following correctly describe DNA?",hint:"DNA is the molecule that carries genetic information.",options:["DNA is found in the nucleus","DNA is a double helix","DNA contains four bases: A, T, C and G","DNA is made of a single strand","Genes are sections of DNA","Each human cell contains 46 chromosomes"],correct:[0,1,2,4,5]},
+  {topic:"Reproduction & genetics",q:"Which of the following are correct statements about chromosomes and genes?",hint:"Chromosomes carry genes which control characteristics.",options:["Humans have 23 pairs of chromosomes","Genes are located on chromosomes","Alleles are different versions of the same gene","Dominant alleles are always expressed","A genotype is the physical appearance of an organism","A phenotype is the physical appearance of an organism"],correct:[0,1,2,3,5]},
+  {topic:"Reproduction & genetics",q:"Which of the following correctly describe variation in organisms?",hint:"Variation can be inherited or caused by the environment.",options:["Inherited variation is passed from parents to offspring","Environmental variation is caused by factors like diet","Blood type is an example of inherited variation","Height is affected by both genes and environment","Identical twins have exactly the same phenotype","Mutations can introduce new variation"],correct:[0,1,2,3,5]},
+  {topic:"Reproduction & genetics",q:"Which of the following correctly describe natural selection?",hint:"Natural selection explains how populations change over time.",options:["Individuals with better adaptations are more likely to survive","Survivors pass on their genes to offspring","All individuals in a population are equally likely to survive","Variation in a population is needed for natural selection","Natural selection can lead to evolution","Charles Darwin proposed the theory of natural selection"],correct:[0,1,3,4,5]},
+  {topic:"Reproduction & genetics",q:"Which of the following are correct about the human reproductive system?",hint:"Think about the organs and processes involved in reproduction.",options:["Sperm are produced in the testes","Eggs are produced in the ovaries","Fertilisation usually occurs in the fallopian tube","The uterus is where the baby develops","Sperm cells have a tail to help them swim","Ovulation is the release of a sperm cell"],correct:[0,1,2,3,4]},
+  {topic:"Reproduction & genetics",q:"Which of the following are correct about inheritance of sex?",hint:"Sex is determined by chromosomes.",options:["Females have two X chromosomes","Males have one X and one Y chromosome","The sex of a baby is determined by the father's sperm","All eggs carry an X chromosome","There is a 50% chance of having a boy","Y chromosomes carry the gene that triggers male development"],correct:[0,1,2,3,4,5]},
+
+  // ── ENERGY ───────────────────────────────────────────────────────────────
+  {topic:"Energy",q:"Which of the following are stores of energy?",hint:"Energy can be stored in many different ways.",options:["Chemical store (e.g. food or fuel)","Kinetic store (moving objects)","Gravitational potential store","Electrical current itself","Thermal store (warm objects)","Nuclear store"],correct:[0,1,2,4,5]},
+  {topic:"Energy",q:"Which of the following correctly describe energy transfers?",hint:"Energy is transferred between stores in different ways.",options:["Energy can be transferred by heating","Energy can be transferred by light (radiation)","Energy can be transferred by electrical work","Energy can be created from nothing","Energy is always conserved","Useful energy is always lost as heat in real machines"],correct:[0,1,2,4,5]},
+  {topic:"Energy",q:"Which of the following are renewable energy sources?",hint:"Renewable sources will not run out.",options:["Solar power","Wind power","Natural gas","Tidal power","Coal","Hydroelectric power"],correct:[0,1,3,5]},
+  {topic:"Energy",q:"Which of the following correctly describe fossil fuels?",hint:"Fossil fuels took millions of years to form.",options:["Fossil fuels include coal, oil and natural gas","They were formed from ancient organisms","Burning fossil fuels releases CO2","They are a renewable energy source","They are a major cause of the greenhouse effect","They will eventually run out"],correct:[0,1,2,4,5]},
+
+  // ── THE EARTH & SPACE ─────────────────────────────────────────────────────
+  {topic:"Earth & space",q:"Which of the following correctly describe the structure of the Earth?",hint:"The Earth has layers with different properties.",options:["The crust is the outermost layer","The mantle is made of semi-molten rock","The core is the hottest part of the Earth","The crust is the thickest layer","The outer core is liquid","Tectonic plates float on the mantle"],correct:[0,1,2,4,5]},
+  {topic:"Earth & space",q:"Which of the following are correct about the solar system?",hint:"The solar system contains the Sun and everything that orbits it.",options:["The Sun is a star","The Earth takes approximately 365 days to orbit the Sun","The Moon orbits the Earth","Jupiter is the largest planet in the solar system","The solar system has 8 planets","Comets are found in the solar system"],correct:[0,1,2,3,4,5]},
+  {topic:"Earth & space",q:"Which of the following correctly describe the rock cycle?",hint:"Rocks can be transformed from one type to another over time.",options:["Igneous rock forms when magma cools and solidifies","Sedimentary rock forms from compressed sediments","Metamorphic rock forms under heat and pressure","All rocks are formed from cooling magma","Weathering breaks rocks into smaller pieces","Fossils are found in sedimentary rocks"],correct:[0,1,2,4,5]},
+  {topic:"Earth & space",q:"Which of the following are causes of the greenhouse effect?",hint:"The greenhouse effect keeps Earth warm but can be intensified.",options:["Carbon dioxide traps heat in the atmosphere","Water vapour is a greenhouse gas","Methane is a greenhouse gas","Oxygen causes the greenhouse effect","Burning fossil fuels increases greenhouse gases","Deforestation increases CO2 in the atmosphere"],correct:[0,1,2,4,5]},
+
+  // ── CHEMICAL REACTIONS ────────────────────────────────────────────────────
+  {topic:"Chemical reactions",q:"Which of the following are signs that a chemical reaction has taken place?",hint:"Chemical reactions produce new substances with different properties.",options:["A colour change","A gas is produced","A temperature change","The mass of reactants always decreases","A precipitate (solid) forms","Light is emitted"],correct:[0,1,2,4,5]},
+  {topic:"Chemical reactions",q:"Which of the following are correct about exothermic reactions?",hint:"Exothermic reactions release energy to the surroundings.",options:["Energy is released to the surroundings","The temperature of the surroundings increases","Combustion is exothermic","All reactions are exothermic","Neutralisation is usually exothermic","Respiration is exothermic"],correct:[0,1,2,4,5]},
+  {topic:"Chemical reactions",q:"Which of the following are correct about endothermic reactions?",hint:"Endothermic reactions absorb energy from the surroundings.",options:["Energy is absorbed from the surroundings","The temperature of the surroundings decreases","Photosynthesis is endothermic","Endothermic reactions always produce a gas","Thermal decomposition is endothermic","The products have more energy than the reactants"],correct:[0,1,2,4,5]},
+  {topic:"Chemical reactions",q:"Which of the following affect the rate of a chemical reaction?",hint:"More frequent and energetic collisions speed up reactions.",options:["Temperature","Concentration of reactants","Surface area of a solid reactant","The colour of the reactants","Presence of a catalyst","Pressure (for gases)"],correct:[0,1,2,4,5]},
+  {topic:"Chemical reactions",q:"Which of the following correctly describe catalysts?",hint:"Catalysts change the speed of a reaction.",options:["A catalyst speeds up a chemical reaction","A catalyst is not used up in the reaction","A catalyst lowers the activation energy","A catalyst changes the products of the reaction","Enzymes are biological catalysts","Catalysts are always metals"],correct:[0,1,2,4]},
+  {topic:"Chemical reactions",q:"Which of the following are correct about conservation of mass in chemical reactions?",hint:"Atoms are rearranged but not created or destroyed.",options:["The total mass of reactants equals the total mass of products","Atoms are conserved in chemical reactions","Balanced equations show conservation of mass","New atoms are created during reactions","If a gas escapes, the measured mass may appear to decrease","The number of each type of atom is the same on both sides of an equation"],correct:[0,1,2,4,5]},
+  {topic:"Chemical reactions",q:"Which of the following are correct about combustion reactions?",hint:"Combustion is the burning of a fuel in oxygen.",options:["Combustion requires oxygen","Complete combustion of hydrocarbons produces CO2 and water","Incomplete combustion can produce carbon monoxide","Combustion is an endothermic reaction","Combustion releases energy","Carbon monoxide is a toxic gas"],correct:[0,1,2,4,5]},
+  {topic:"Chemical reactions",q:"Which of the following correctly describe oxidation?",hint:"Oxidation involves the addition of oxygen or loss of electrons.",options:["Oxidation is the gain of oxygen","Rusting is an example of oxidation","Oxidation can occur without a flame","Reduction is the opposite of oxidation","Oxidation always involves burning","Metals can be oxidised to form metal oxides"],correct:[0,1,2,3,5]},
+
+  // ── ECOLOGY & ECOSYSTEMS ─────────────────────────────────────────────────
+  {topic:"Ecology & ecosystems",q:"Which of the following correctly describe a food chain?",hint:"Food chains show the flow of energy through a community.",options:["Arrows show the direction of energy flow","Producers are always plants","A food chain always starts with a producer","Consumers eat other organisms","A predator is always at the start of a food chain","The sun provides the energy for most food chains"],correct:[0,1,2,3,5]},
+  {topic:"Ecology & ecosystems",q:"Which of the following correctly describe adaptations?",hint:"Adaptations help organisms survive in their habitat.",options:["A polar bear's thick fur is an adaptation to cold environments","Adaptations can be physical or behavioural","Adaptations develop during an individual organism's lifetime","A cactus stores water in its stem to survive drought","Adaptations are inherited","Adaptations improve survival and reproduction"],correct:[0,1,3,4,5]},
+  {topic:"Ecology & ecosystems",q:"Which of the following are correct about photosynthesis?",hint:"Photosynthesis is how plants make their own food.",options:["Glucose and oxygen are products of photosynthesis","Carbon dioxide and water are reactants","Chlorophyll absorbs light energy","Photosynthesis takes place in the mitochondria","Light is needed for photosynthesis","Photosynthesis stores energy in glucose"],correct:[0,1,2,4,5]},
+  {topic:"Ecology & ecosystems",q:"Which of the following are correct about aerobic respiration?",hint:"Respiration releases energy from glucose.",options:["Glucose and oxygen are reactants","Carbon dioxide and water are products","Energy is released","Aerobic respiration occurs in mitochondria","Photosynthesis and respiration are opposite processes","Aerobic respiration only occurs in plants"],correct:[0,1,2,3,4]},
+  {topic:"Ecology & ecosystems",q:"Which of the following correctly describe the carbon cycle?",hint:"Carbon moves through living organisms and the environment.",options:["Photosynthesis removes CO2 from the atmosphere","Respiration releases CO2 into the atmosphere","Decomposers break down dead organisms and release CO2","Burning fossil fuels releases CO2","Carbon is stored in fossils","Combustion absorbs CO2 from the atmosphere"],correct:[0,1,2,3,4]},
+  {topic:"Ecology & ecosystems",q:"Which of the following are threats to biodiversity?",hint:"Biodiversity is the variety of life on Earth.",options:["Habitat destruction","Pollution","Overexploitation of species","Conservation programmes","Climate change","Invasive species"],correct:[0,1,2,4,5]},
+  {topic:"Ecology & ecosystems",q:"Which of the following correctly describe decomposers and their role?",hint:"Decomposers are vital for recycling nutrients.",options:["Bacteria and fungi are decomposers","Decomposers break down dead organisms","Decomposers release nutrients back into the soil","Decomposers are producers","Decomposers are essential for nutrient cycling","Decomposers carry out photosynthesis"],correct:[0,1,2,4]},
+  {topic:"Ecology & ecosystems",q:"Which of the following correctly describe factors that affect population size?",hint:"Populations change due to many interacting factors.",options:["Food availability affects population size","Predation can limit prey population size","Disease can reduce population size","Migration has no effect on population size","Competition for resources affects population size","A population grows indefinitely if there are no predators"],correct:[0,1,2,4]}
+];
+
+let state = ALL_QUESTIONS.map(() => ({ selected: new Set(), checked: false }));
+
+function getTopics() {
+  const seen = [];
+  ALL_QUESTIONS.forEach(q => { if (!seen.includes(q.topic)) seen.push(q.topic); });
+  return seen;
+}
+
+function toggle(qi, oi) {
+  if (state[qi].checked) return;
+  const s = state[qi].selected;
+  if (s.has(oi)) s.delete(oi); else s.add(oi);
+  renderQuestion(qi);
+  updateProgress();
+}
+
+function checkQ(qi) {
+  state[qi].checked = true;
+  renderQuestion(qi);
+  document.getElementById(`chkbtn-${qi}`).classList.add('done');
+  document.getElementById(`chkbtn-${qi}`).disabled = true;
+  updateProgress();
+}
+
+function checkAll() {
+  ALL_QUESTIONS.forEach((_, qi) => { state[qi].checked = true; });
+  document.querySelectorAll('.check-btn').forEach(b => { b.classList.add('done'); b.disabled = true; });
+  document.querySelectorAll('.qcard').forEach((card, qi) => renderQuestionInPlace(qi));
+  updateProgress();
+}
+
+function resetAll() {
+  state = ALL_QUESTIONS.map(() => ({ selected: new Set(), checked: false }));
+  buildQuiz();
+  updateProgress();
+}
+
+function computeScore() {
+  let correct = 0, total = 0;
+  ALL_QUESTIONS.forEach((q, qi) => {
+    if (!state[qi].checked) return;
+    const cs = new Set(q.correct);
+    const chosen = state[qi].selected;
+    q.options.forEach((_, oi) => {
+      total++;
+      if (cs.has(oi) && chosen.has(oi)) correct++;
+      else if (!cs.has(oi) && !chosen.has(oi)) correct++;
+    });
+  });
+  return { correct, total };
+}
+
+function updateProgress() {
+  const checked = state.filter(s => s.checked).length;
+  const pct = Math.round((checked / ALL_QUESTIONS.length) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = `${checked} of ${ALL_QUESTIONS.length} checked`;
+  const { correct, total } = computeScore();
+  const scorePct = total > 0 ? Math.round((correct / total) * 100) : 0;
+  document.getElementById('score-label').textContent = total > 0 ? `Score: ${scorePct}%` : 'Score: —';
+  document.getElementById('live-score').textContent = total > 0 ? `${scorePct}%` : '—';
+}
+
+function optClass(qi, oi, checked) {
+  const chosen = state[qi].selected.has(oi);
+  const correct = ALL_QUESTIONS[qi].correct.includes(oi);
+  if (!checked) return chosen ? 'selected' : '';
+  if (chosen && correct) return 'correct';
+  if (chosen && !correct) return 'wrong';
+  if (!chosen && correct) return 'missed';
+  return '';
+}
+
+function optIcon(cls) {
+  if (cls === 'correct') return '✓';
+  if (cls === 'wrong') return '✕';
+  if (cls === 'missed') return '!';
+  if (cls === 'selected') return '✓';
+  return '';
+}
+
+function renderQuestion(qi) {
+  const el = document.getElementById(`q-${qi}`);
+  if (el) el.outerHTML = questionHTML(qi);
+}
+
+function renderQuestionInPlace(qi) {
+  const el = document.getElementById(`q-${qi}`);
+  if (el) el.outerHTML = questionHTML(qi);
+}
+
+function questionHTML(qi) {
+  const q = ALL_QUESTIONS[qi];
+  const s = state[qi];
+  const opts = q.options.map((opt, oi) => {
+    const cls = optClass(qi, oi, s.checked);
+    const icon = optIcon(cls);
+    return `<div class="opt${cls ? ' '+cls : ''}${s.checked?' disabled':''}" onclick="${s.checked?'':'toggle('+qi+','+oi+')'}">
+      <div class="cb">${icon}</div>
+      <span>${opt}</span>
+    </div>`;
+  }).join('');
+  return `<div class="qcard" id="q-${qi}">
+    <div class="qnum">Q${qi+1}</div>
+    <div class="qtext">${q.q}</div>
+    <div class="hint">${q.hint}</div>
+    <div class="options">${opts}</div>
+    <button class="check-btn${s.checked?' done':''}" id="chkbtn-${qi}" onclick="checkQ(${qi})" ${s.checked?'disabled':''}>Check answer</button>
+  </div>`;
+}
+
+function buildQuiz() {
+  const root = document.getElementById('quiz-root');
+  const topics = getTopics();
+  let html = '';
+  topics.forEach(topic => {
+    html += `<div class="topic-label">${topic}</div>`;
+    ALL_QUESTIONS.forEach((q, qi) => {
+      if (q.topic === topic) html += questionHTML(qi);
+    });
+  });
+  root.innerHTML = html;
+}
+
+buildQuiz();
+updateProgress();
+</script>
+</body>
+</html>
