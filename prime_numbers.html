@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Numbers — Tupara's Maths</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f5f3; --bg3: #eeece8;
+    --text: #1a1a18; --text2: #5a5a56; --text3: #9a9a94;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --blue-bg: #e6f1fb; --blue-border: #b5d4f4; --blue-text: #0c447c;
+    --green-bg: #eaf3de; --green-border: #c0dd97; --green-text: #3b6d11;
+    --red-bg: #fcebeb; --red-border: #f7c1c1; --red-text: #791f1f;
+    --amber-bg: #faeeda; --amber-border: #fac775; --amber-text: #633806;
+    --purple-bg: #f0e8f5; --purple-border: #c9b3db; --purple-text: #4a2068;
+    --radius: 10px; --radius-sm: 6px;
+  }
+  body { font-family: Georgia, 'Times New Roman', serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
+  .shell { max-width: 780px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+  /* Header */
+  .site-header { text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid var(--border); }
+  .site-header h1 { font-size: 28px; font-weight: normal; letter-spacing: -0.5px; color: var(--text); }
+  .site-header p { font-size: 14px; color: var(--text2); margin-top: 6px; font-family: system-ui, sans-serif; }
+  .badge-row { display: flex; justify-content: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .badge { font-family: system-ui, sans-serif; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 0.5px solid var(--border2); color: var(--text2); background: var(--bg); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 0; margin-bottom: 2rem; border-bottom: 2px solid var(--border); }
+  .tab { font-family: system-ui, sans-serif; font-size: 14px; padding: 10px 24px; cursor: pointer; color: var(--text3); border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; }
+  .tab:hover { color: var(--text2); }
+  .tab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Lesson cards */
+  .lesson-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; }
+  .lesson-card h2 { font-size: 18px; font-weight: normal; margin-bottom: 10px; color: var(--text); }
+  .lesson-card h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: var(--text); font-family: system-ui, sans-serif; }
+  .lesson-card p, .lesson-card li { font-size: 14px; line-height: 1.7; color: var(--text2); font-family: system-ui, sans-serif; }
+  .lesson-card ul, .lesson-card ol { padding-left: 20px; margin: 8px 0; }
+  .lesson-card li { margin-bottom: 4px; }
+  .lesson-card .highlight { background: var(--purple-bg); border: 1px solid var(--purple-border); border-radius: var(--radius-sm); padding: 12px 16px; margin: 12px 0; }
+  .lesson-card .highlight p { color: var(--purple-text); font-weight: 500; }
+  .lesson-card .example { background: var(--blue-bg); border: 1px solid var(--blue-border); border-radius: var(--radius-sm); padding: 12px 16px; margin: 12px 0; }
+  .lesson-card .example p { color: var(--blue-text); }
+  .lesson-card .example .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 6px; }
+  .lesson-card code { background: var(--bg2); padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+  .factor-tree { font-family: system-ui, sans-serif; font-size: 14px; line-height: 2; color: var(--text); padding: 8px 0; }
+  .factor-tree .level { padding-left: 24px; position: relative; }
+  .factor-tree .level::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 12px; border-left: 1px solid var(--border2); }
+  .factor-tree .prime { color: var(--green-text); font-weight: 600; }
+  .factor-tree .composite { color: var(--text2); }
+  .math { font-family: Georgia, serif; font-style: italic; }
+  .math sup { font-size: 0.75em; }
+  .fraction { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 4px; font-family: Georgia, serif; }
+  .fraction .num, .fraction .den { font-size: 14px; line-height: 1.2; }
+  .fraction .num { border-bottom: 1px solid var(--text); padding-bottom: 2px; }
+  .fraction .den { padding-top: 2px; }
+
+  /* Try it - interactive examples */
+  .try-it { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: var(--radius-sm); padding: 14px 16px; margin: 12px 0; }
+  .try-it .label { font-family: system-ui, sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; color: var(--amber-text); margin-bottom: 8px; }
+  .try-it p { font-family: system-ui, sans-serif; font-size: 14px; color: var(--amber-text); }
+  .try-it .reveal-btn { font-family: system-ui, sans-serif; font-size: 12px; padding: 5px 12px; border-radius: var(--radius-sm); border: 1px solid var(--amber-border); background: var(--bg); cursor: pointer; color: var(--amber-text); margin-top: 8px; }
+  .try-it .reveal-btn:hover { background: var(--amber-bg); }
+  .try-it .answer { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--amber-border); }
+  .try-it .answer.show { display: block; }
+
+  /* Progress */
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-meta { display: flex; justify-content: space-between; font-family: system-ui, sans-serif; font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+  .prog-bar { height: 3px; background: var(--border); border-radius: 2px; }
+  .prog-fill { height: 3px; background: var(--text2); border-radius: 2px; transition: width 0.4s ease; }
+
+  /* Topic heading */
+  .topic-label { font-family: system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin: 2rem 0 0.75rem; }
+  .topic-label:first-of-type { margin-top: 0; }
+
+  /* Question card */
+  .qcard { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 0.75rem; }
+  .qnum { font-family: system-ui, sans-serif; font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+  .qtext { font-size: 15px; line-height: 1.6; color: var(--text); margin-bottom: 10px; }
+  .hint { font-family: system-ui, sans-serif; font-size: 12px; color: var(--text3); font-style: italic; margin-bottom: 12px; }
+  .options { display: flex; flex-direction: column; gap: 7px; }
+  .opt { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: background 0.12s, border-color 0.12s; font-family: system-ui, sans-serif; font-size: 13.5px; color: var(--text); }
+  .opt:hover { background: var(--bg2); border-color: var(--border2); }
+  .opt.selected { background: var(--blue-bg); border-color: var(--blue-border); color: var(--blue-text); }
+  .opt.correct  { background: var(--green-bg); border-color: var(--green-border); color: var(--green-text); }
+  .opt.wrong    { background: var(--red-bg); border-color: var(--red-border); color: var(--red-text); }
+  .opt.missed   { background: var(--amber-bg); border-color: var(--amber-border); color: var(--amber-text); }
+  .opt.disabled { cursor: default; }
+  .cb { width: 16px; height: 16px; border: 1.5px solid var(--border2); border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+  .opt.selected .cb { background: var(--blue-text); border-color: var(--blue-text); color: #fff; }
+  .opt.correct  .cb { background: var(--green-text); border-color: var(--green-text); color: #fff; }
+  .opt.wrong    .cb { background: var(--red-text); border-color: var(--red-text); color: #fff; }
+  .opt.missed   .cb { background: var(--amber-text); border-color: var(--amber-text); color: #fff; }
+  .check-btn { margin-top: 12px; font-family: system-ui, sans-serif; font-size: 12px; padding: 6px 14px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); background: transparent; cursor: pointer; color: var(--text2); transition: background 0.12s; }
+  .check-btn:hover { background: var(--bg2); }
+  .check-btn.done { opacity: 0.4; cursor: default; }
+
+  /* Controls */
+  .controls { position: sticky; bottom: 0; background: rgba(238,236,232,0.95); backdrop-filter: blur(8px); border-top: 0.5px solid var(--border); padding: 1rem 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 2rem; }
+  .score-display { font-family: system-ui, sans-serif; font-size: 13px; color: var(--text2); }
+  .score-display strong { color: var(--text); font-size: 16px; }
+  .btn { font-family: system-ui, sans-serif; font-size: 13px; padding: 8px 18px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); background: var(--bg); cursor: pointer; color: var(--text); transition: background 0.12s; }
+  .btn:hover { background: var(--bg2); }
+  .btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn.primary:hover { opacity: 0.8; }
+
+  @media (max-width: 500px) { .shell { padding: 1rem 0.75rem 3rem; } .qtext { font-size: 14px; } .tab { padding: 10px 16px; font-size: 13px; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="site-header">
+    <h1>Prime Numbers</h1>
+    <p>Learn about prime numbers, prime factor decomposition, and put your skills to the test</p>
+    <div class="badge-row">
+      <span class="badge">Year 9 Maths</span>
+      <span class="badge">Lessons + Quiz</span>
+      <span class="badge">20 questions</span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('lessons')">Lessons</button>
+    <button class="tab" onclick="switchTab('quiz')">Quiz</button>
+  </div>
+
+  <!-- ═══════════════════ LESSONS TAB ═══════════════════ -->
+  <div id="tab-lessons" class="tab-content active">
+
+    <div class="lesson-card">
+      <h2>1. What is a prime number?</h2>
+      <p>A <strong>prime number</strong> is a whole number greater than 1 that has exactly <strong>two factors</strong>: 1 and itself.</p>
+      <div class="highlight">
+        <p>Key rule: A prime number can only be divided evenly by 1 and by itself.</p>
+      </div>
+      <h3>Examples</h3>
+      <ul>
+        <li><strong>7</strong> is prime — its only factors are 1 and 7</li>
+        <li><strong>12</strong> is NOT prime — it has factors 1, 2, 3, 4, 6, 12</li>
+        <li><strong>2</strong> is prime — it's the only even prime number</li>
+        <li><strong>1</strong> is NOT prime — it only has one factor (itself), and primes need exactly two</li>
+      </ul>
+      <h3>The first 15 prime numbers</h3>
+      <div class="example">
+        <p class="label">Remember these</p>
+        <p><strong>2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47</strong></p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Is <strong>51</strong> a prime number?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>No!</strong> 51 = 3 &times; 17, so it has more than two factors. It looks prime but it isn't — always check!</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <h2>2. How to test if a number is prime</h2>
+      <p>To check if a number is prime, try dividing it by all prime numbers up to its square root. If none divide evenly, the number is prime.</p>
+      <h3>Step-by-step method</h3>
+      <ol>
+        <li>Is the number less than 2? &rarr; <strong>Not prime</strong></li>
+        <li>Is it 2 or 3? &rarr; <strong>Prime</strong></li>
+        <li>Is it even (divisible by 2)? &rarr; <strong>Not prime</strong></li>
+        <li>Try dividing by 3, 5, 7, 11... up to &radic;n</li>
+        <li>If nothing divides evenly &rarr; <strong>Prime!</strong></li>
+      </ol>
+      <div class="example">
+        <p class="label">Worked example — Is 97 prime?</p>
+        <p>&radic;97 &asymp; 9.8, so we only need to test primes up to 9: that's 2, 3, 5, 7</p>
+        <p>97 &divide; 2 = 48.5 &cross; &nbsp; 97 &divide; 3 = 32.3... &cross; &nbsp; 97 &divide; 5 = 19.4 &cross; &nbsp; 97 &divide; 7 = 13.8... &cross;</p>
+        <p><strong>None divide evenly, so 97 is prime!</strong></p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Is <strong>91</strong> prime? (Hint: try dividing by 7)</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>No!</strong> 91 = 7 &times; 13. Even though it looks prime, 7 goes into it exactly 13 times.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <h2>3. Prime factor decomposition</h2>
+      <p><strong>Prime factor decomposition</strong> (also called prime factorisation) means breaking a number down into a product of prime numbers.</p>
+      <p>We use a <strong>factor tree</strong> to do this — keep splitting the number until every branch ends in a prime.</p>
+      <div class="example">
+        <p class="label">Worked example — Factor tree for 48</p>
+        <div class="factor-tree">
+          <div><span class="composite">48</span></div>
+          <div class="level"><span class="prime">2</span> &times; <span class="composite">24</span></div>
+          <div class="level" style="padding-left:72px;"><span class="prime">2</span> &times; <span class="composite">12</span></div>
+          <div class="level" style="padding-left:120px;"><span class="prime">2</span> &times; <span class="composite">6</span></div>
+          <div class="level" style="padding-left:168px;"><span class="prime">2</span> &times; <span class="prime">3</span></div>
+        </div>
+        <p>Reading off the primes: 48 = <strong>2 &times; 2 &times; 2 &times; 2 &times; 3</strong></p>
+      </div>
+      <h3>Method: Repeated division</h3>
+      <ol>
+        <li>Start with the smallest prime (2). Does it divide your number? If yes, divide and repeat.</li>
+        <li>When 2 no longer works, try 3, then 5, then 7, etc.</li>
+        <li>Keep going until you reach 1.</li>
+      </ol>
+      <div class="example">
+        <p class="label">Repeated division for 180</p>
+        <p>180 &divide; 2 = 90 &rarr; 90 &divide; 2 = 45 &rarr; 45 &divide; 3 = 15 &rarr; 15 &divide; 3 = 5 &rarr; 5 &divide; 5 = 1</p>
+        <p><strong>180 = 2 &times; 2 &times; 3 &times; 3 &times; 5</strong></p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Find the prime factor decomposition of <strong>60</strong>.</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>60 = 2 &times; 30 = 2 &times; 2 &times; 15 = 2 &times; 2 &times; 3 &times; 5</p>
+          <p><strong>60 = 2 &times; 2 &times; 3 &times; 5</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <h2>4. Writing as a product of powers of primes</h2>
+      <p>Once you have the prime factors, group the repeated primes together and write them using <strong>index notation</strong> (powers).</p>
+      <div class="example">
+        <p class="label">Examples</p>
+        <p>48 = 2 &times; 2 &times; 2 &times; 2 &times; 3 = <strong>2<sup>4</sup> &times; 3</strong></p>
+        <p>180 = 2 &times; 2 &times; 3 &times; 3 &times; 5 = <strong>2<sup>2</sup> &times; 3<sup>2</sup> &times; 5</strong></p>
+        <p>60 = 2 &times; 2 &times; 3 &times; 5 = <strong>2<sup>2</sup> &times; 3 &times; 5</strong></p>
+      </div>
+      <div class="highlight">
+        <p>The exponent (power) tells you how many times that prime appears in the factorisation.</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Express <strong>360</strong> as a product of powers of primes.</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>360 = 2 &times; 2 &times; 2 &times; 3 &times; 3 &times; 5 = <strong>2<sup>3</sup> &times; 3<sup>2</sup> &times; 5</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <h2>5. HCF and LCM using prime factors</h2>
+      <p>Once you can find prime factor decompositions, you can use them to find the <strong>Highest Common Factor (HCF)</strong> and <strong>Lowest Common Multiple (LCM)</strong> of two numbers.</p>
+      <h3>HCF — multiply the shared primes (lowest powers)</h3>
+      <div class="example">
+        <p class="label">Find the HCF of 48 and 180</p>
+        <p>48 = 2<sup>4</sup> &times; 3</p>
+        <p>180 = 2<sup>2</sup> &times; 3<sup>2</sup> &times; 5</p>
+        <p>Common primes: 2 and 3. Take the <strong>lowest</strong> power of each:</p>
+        <p>HCF = 2<sup>2</sup> &times; 3 = 4 &times; 3 = <strong>12</strong></p>
+      </div>
+      <h3>LCM — multiply all primes (highest powers)</h3>
+      <div class="example">
+        <p class="label">Find the LCM of 48 and 180</p>
+        <p>Take the <strong>highest</strong> power of every prime that appears:</p>
+        <p>LCM = 2<sup>4</sup> &times; 3<sup>2</sup> &times; 5 = 16 &times; 9 &times; 5 = <strong>720</strong></p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Find the HCF and LCM of <strong>60</strong> and <strong>90</strong>.</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>60 = 2<sup>2</sup> &times; 3 &times; 5 &nbsp;&nbsp; 90 = 2 &times; 3<sup>2</sup> &times; 5</p>
+          <p>HCF = 2 &times; 3 &times; 5 = <strong>30</strong></p>
+          <p>LCM = 2<sup>2</sup> &times; 3<sup>2</sup> &times; 5 = 4 &times; 9 &times; 5 = <strong>180</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <h2>6. Simplifying fractions with prime factors</h2>
+      <p>To simplify a fraction, find the <strong>HCF</strong> of the numerator and denominator, then divide both by it.</p>
+      <div class="example">
+        <p class="label">Worked example — Simplify 255/345</p>
+        <p>255 = 3 &times; 5 &times; 17</p>
+        <p>345 = 3 &times; 5 &times; 23</p>
+        <p>HCF = 3 &times; 5 = 15</p>
+        <p>255 &divide; 15 = 17 &nbsp;&nbsp; 345 &divide; 15 = 23</p>
+        <p><strong><span class="fraction"><span class="num">255</span><span class="den">345</span></span> = <span class="fraction"><span class="num">17</span><span class="den">23</span></span></strong></p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Simplify <strong><span class="fraction"><span class="num">84</span><span class="den">126</span></span></strong></p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>84 = 2<sup>2</sup> &times; 3 &times; 7 &nbsp;&nbsp; 126 = 2 &times; 3<sup>2</sup> &times; 7</p>
+          <p>HCF = 2 &times; 3 &times; 7 = 42</p>
+          <p>84 &divide; 42 = 2 &nbsp;&nbsp; 126 &divide; 42 = 3</p>
+          <p><strong><span class="fraction"><span class="num">84</span><span class="den">126</span></span> = <span class="fraction"><span class="num">2</span><span class="den">3</span></span></strong></p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════ QUIZ TAB ═══════════════════ -->
+  <div id="tab-quiz" class="tab-content">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="prog-label">0 of 20 checked</span>
+        <span id="score-label">Score: 0%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <div id="quiz-root"></div>
+
+    <div class="controls">
+      <div class="score-display">Score: <strong id="live-score">&mdash;</strong></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" onclick="checkAll()">Check all</button>
+        <button class="btn primary" onclick="resetAll()">Retake quiz</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Tab switching ── */
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelector('.tab[onclick*="' + name + '"]').classList.add('active');
+}
+
+/* ── Lesson reveal buttons ── */
+function reveal(btn) {
+  const ans = btn.nextElementSibling;
+  ans.classList.toggle('show');
+  btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+}
+
+/* ── Quiz questions ── */
+const ALL_QUESTIONS = [
+  // ── IDENTIFYING PRIMES ──
+  {topic:"Identifying primes",q:"Which of the following numbers are prime?",hint:"A prime has exactly two factors: 1 and itself.",options:["17","21","29","39","2","51"],correct:[0,2,4]},
+  {topic:"Identifying primes",q:"Which of these numbers only has one prime factor?",hint:"Think about numbers that are a power of a single prime.",options:["9","15","21","17"],correct:[0,3]},
+  {topic:"Identifying primes",q:"Which of the following are NOT prime numbers?",hint:"Check if each number can be divided by a smaller prime.",options:["47","49","53","57","61","63"],correct:[1,3,5]},
+  {topic:"Identifying primes",q:"Which statements about prime numbers are true?",hint:"Think carefully about the definition of a prime number.",options:["1 is a prime number","2 is the only even prime number","All prime numbers are odd","The number 0 has no prime factors","There are infinitely many primes","Every even number greater than 2 is not prime"],correct:[1,4,5]},
+
+  // ── PRIME FACTORS ──
+  {topic:"Prime factors",q:"Which of the following are prime factors of 30?",hint:"Break 30 down: what primes multiply together to make 30?",options:["2","3","5","6","10","15"],correct:[0,1,2]},
+  {topic:"Prime factors",q:"Which of the following are prime factors of 84?",hint:"Start dividing by the smallest primes: 2, 3, 5, 7...",options:["2","3","4","6","7","12"],correct:[0,1,4]},
+  {topic:"Prime factors",q:"What are ALL the prime factors of 210?",hint:"210 = 2 × 105. Keep going!",options:["2","3","5","7","11","42"],correct:[0,1,2,3]},
+
+  // ── PRIME FACTOR DECOMPOSITION ──
+  {topic:"Prime factor decomposition",q:"What is the prime factor decomposition of 36?",hint:"Start by dividing 36 by 2, then keep going.",options:["2 × 18","4 × 9","6 × 6","2² × 3²","2 × 3³","3⁴"],correct:[3]},
+  {topic:"Prime factor decomposition",q:"What is the prime factor decomposition of 48?",hint:"Keep dividing by 2 until you can't, then try 3.",options:["8 × 6","2 × 24","2⁴ × 3","2³ × 3²","4 × 12","6 × 8"],correct:[2]},
+  {topic:"Prime factor decomposition",q:"Which of these correctly shows 72 as a product of prime factors?",hint:"72 = 8 × 9. Now break those down further.",options:["2² × 3²","2³ × 3²","2³ × 9","8 × 9","2⁴ × 3","2² × 18"],correct:[1]},
+  {topic:"Prime factor decomposition",q:"What is the prime factor decomposition of 300?",hint:"300 = 3 × 100. Break 100 down into primes too.",options:["2² × 3 × 5²","2 × 3 × 5³","2³ × 3 × 5","3 × 100","2² × 75","4 × 75"],correct:[0]},
+  {topic:"Prime factor decomposition",q:"Express 540 as a product of powers of primes.",hint:"540 = 54 × 10. Find the prime factors of each part.",options:["2² × 3³ × 5","2³ × 3² × 5","2 × 3³ × 5²","2² × 3² × 15","2² × 3 × 5³","4 × 135"],correct:[0]},
+
+  // ── HCF AND LCM ──
+  {topic:"HCF and LCM",q:"Using prime factors, what is the HCF of 24 and 36?",hint:"24 = 2³ × 3 and 36 = 2² × 3². Take the lowest powers of shared primes.",options:["4","6","8","12","18","24"],correct:[3]},
+  {topic:"HCF and LCM",q:"Using prime factors, what is the LCM of 12 and 18?",hint:"12 = 2² × 3 and 18 = 2 × 3². Take the highest powers of all primes.",options:["6","24","36","72","108","216"],correct:[2]},
+  {topic:"HCF and LCM",q:"The HCF of two numbers is 2² × 3 and their LCM is 2³ × 3² × 5. Which pairs could these numbers be?",hint:"Each number must be a multiple of the HCF and a factor of the LCM.",options:["12 and 60","24 and 36","12 and 180","60 and 90","12 and 90","24 and 180"],correct:[0]},
+  {topic:"HCF and LCM",q:"Which statements about HCF and LCM are true?",hint:"Think about what 'highest common factor' and 'lowest common multiple' mean.",options:["The HCF of two numbers is always less than or equal to both numbers","The LCM of two numbers is always greater than or equal to both numbers","HCF × LCM = product of the two numbers","The HCF uses the highest powers of shared primes","The LCM uses the lowest powers of all primes","If two numbers are coprime, their HCF is 1"],correct:[0,1,2,5]},
+
+  // ── SIMPLIFYING FRACTIONS ──
+  {topic:"Simplifying fractions",q:"Using prime factor decomposition, what does ²⁵⁵⁄₃₄₅ simplify to?",hint:"Find the prime factors of both 255 and 345, then cancel the common ones.",options:["⁵⁄₇","⁷⁄₉","¹⁷⁄₂₃","⁶⁄₇","⁵¹⁄₆₉","³⁄₅"],correct:[2]},
+  {topic:"Simplifying fractions",q:"What does ⁴²⁄₇₀ simplify to when you use prime factors?",hint:"42 = 2 × 3 × 7 and 70 = 2 × 5 × 7. What's common?",options:["³⁄₅","⁶⁄₁₀","²¹⁄₃₅","⁷⁄₁₀","²⁄₅","³⁄₇"],correct:[0]},
+  {topic:"Simplifying fractions",q:"Simplify ¹⁰⁸⁄₁₄₄ using prime factor decomposition.",hint:"Find HCF(108, 144) first. Both are divisible by 2, 3...",options:["³⁄₄","²⁄₃","⁹⁄₁₂","²⁷⁄₃₆","⁵⁴⁄₇₂","⁶⁄₈"],correct:[0]},
+  {topic:"Simplifying fractions",q:"Which of these fractions are already in their simplest form?",hint:"A fraction is in simplest form when the numerator and denominator share no common factors other than 1.",options:["¹⁷⁄₂₃","⁸⁄₁₂","⁷⁄₁₅","⁹⁄₂₁","¹¹⁄₃₀","¹⁴⁄₃₅"],correct:[0,2,4]},
+];
+
+/* ── State ── */
+const state = ALL_QUESTIONS.map(() => ({ selected: new Set(), checked: false }));
+
+function optClass(qi, oi) {
+  const s = state[qi];
+  if (!s.checked) return s.selected.has(oi) ? 'opt selected' : 'opt';
+  const isCorrect = ALL_QUESTIONS[qi].correct.includes(oi);
+  const wasSelected = s.selected.has(oi);
+  if (wasSelected && isCorrect)  return 'opt correct disabled';
+  if (wasSelected && !isCorrect) return 'opt wrong disabled';
+  if (!wasSelected && isCorrect) return 'opt missed disabled';
+  return 'opt disabled';
+}
+
+function optIcon(qi, oi) {
+  const s = state[qi];
+  if (!s.checked) return s.selected.has(oi) ? '&#10003;' : '';
+  const isCorrect = ALL_QUESTIONS[qi].correct.includes(oi);
+  const wasSelected = s.selected.has(oi);
+  if (wasSelected && isCorrect)  return '&#10003;';
+  if (wasSelected && !isCorrect) return '&#10005;';
+  if (!wasSelected && isCorrect) return '!';
+  return '';
+}
+
+function toggleOpt(qi, oi) {
+  if (state[qi].checked) return;
+  state[qi].selected.has(oi) ? state[qi].selected.delete(oi) : state[qi].selected.add(oi);
+  renderQuestion(qi);
+}
+
+function checkQ(qi) {
+  if (state[qi].checked) return;
+  state[qi].checked = true;
+  renderQuestion(qi);
+  updateProgress();
+}
+
+function checkAll() {
+  state.forEach((s, i) => { if (!s.checked) { s.checked = true; renderQuestion(i); }});
+  updateProgress();
+}
+
+function resetAll() {
+  state.forEach(s => { s.selected.clear(); s.checked = false; });
+  buildQuiz();
+  updateProgress();
+}
+
+function computeScore() {
+  let correct = 0, total = 0;
+  ALL_QUESTIONS.forEach((q, qi) => {
+    if (!state[qi].checked) return;
+    q.options.forEach((_, oi) => {
+      total++;
+      const isCorrect = q.correct.includes(oi);
+      const wasSelected = state[qi].selected.has(oi);
+      if (isCorrect === wasSelected) correct++;
+    });
+  });
+  return total === 0 ? 0 : Math.round(100 * correct / total);
+}
+
+function updateProgress() {
+  const checked = state.filter(s => s.checked).length;
+  const pct = Math.round(100 * checked / ALL_QUESTIONS.length);
+  const score = computeScore();
+  document.getElementById('prog-label').textContent = checked + ' of ' + ALL_QUESTIONS.length + ' checked';
+  document.getElementById('score-label').textContent = 'Score: ' + (checked ? score + '%' : '0%');
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('live-score').textContent = checked ? score + '%' : '\u2014';
+}
+
+function renderQuestion(qi) {
+  const el = document.getElementById('q-' + qi);
+  if (!el) return;
+  const q = ALL_QUESTIONS[qi];
+  let html = '<div class="qnum">Question ' + (qi + 1) + '</div>';
+  html += '<div class="qtext">' + q.q + '</div>';
+  html += '<div class="hint">' + q.hint + '</div>';
+  html += '<div class="options">';
+  q.options.forEach((o, oi) => {
+    html += '<div class="' + optClass(qi, oi) + '" onclick="toggleOpt(' + qi + ',' + oi + ')">';
+    html += '<span class="cb">' + optIcon(qi, oi) + '</span>' + o + '</div>';
+  });
+  html += '</div>';
+  html += '<button class="check-btn' + (state[qi].checked ? ' done' : '') + '" onclick="checkQ(' + qi + ')">' + (state[qi].checked ? 'Checked' : 'Check answer') + '</button>';
+  el.innerHTML = html;
+}
+
+function buildQuiz() {
+  const root = document.getElementById('quiz-root');
+  let html = '';
+  let currentTopic = '';
+  ALL_QUESTIONS.forEach((q, qi) => {
+    if (q.topic !== currentTopic) {
+      currentTopic = q.topic;
+      html += '<div class="topic-label">' + currentTopic + '</div>';
+    }
+    html += '<div class="qcard" id="q-' + qi + '"></div>';
+  });
+  root.innerHTML = html;
+  ALL_QUESTIONS.forEach((_, qi) => renderQuestion(qi));
+}
+
+buildQuiz();
+updateProgress();
+</script>
+</body>
+</html>

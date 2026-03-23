@@ -25,3 +25,14 @@ A collection of interactive learning tools to help Tupara with his school lesson
 - Earth & space
 
 Click the link above to start the quiz. It includes real-time progress tracking, score calculation, and visual feedback on answers.
+
+### Prime Numbers
+
+[Prime Numbers](https://peterAkuhata.github.io/tupara-learnings/prime_numbers.html) — Interactive lessons and a 20-question quiz covering:
+
+- Identifying prime numbers
+- Prime factors
+- Prime factor decomposition (factor trees)
+- Writing as a product of powers of primes
+- HCF and LCM using prime factors
+- Simplifying fractions with prime factors
