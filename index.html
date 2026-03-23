@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tupara's Learning Hub</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f5f3; --bg3: #eeece8;
+    --text: #1a1a18; --text2: #5a5a56; --text3: #9a9a94;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --blue-bg: #e6f1fb; --blue-border: #b5d4f4; --blue-text: #0c447c;
+    --green-bg: #eaf3de; --green-border: #c0dd97; --green-text: #3b6d11;
+    --purple-bg: #f0e8f5; --purple-border: #c9b3db; --purple-text: #4a2068;
+    --radius: 10px; --radius-sm: 6px;
+  }
+  body { font-family: Georgia, 'Times New Roman', serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
+  .shell { max-width: 780px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+  .site-header { text-align: center; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid var(--border); }
+  .site-header h1 { font-size: 28px; font-weight: normal; letter-spacing: -0.5px; color: var(--text); }
+  .site-header p { font-size: 14px; color: var(--text2); margin-top: 6px; font-family: system-ui, sans-serif; }
+
+  .cards { display: flex; flex-direction: column; gap: 12px; }
+
+  .card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+    display: block;
+  }
+  .card:hover {
+    border-color: var(--border2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .card-subject { font-family: system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  .card-subject.science { color: var(--blue-text); }
+  .card-subject.maths { color: var(--purple-text); }
+  .card h2 { font-size: 20px; font-weight: normal; margin-bottom: 8px; }
+  .card .desc { font-family: system-ui, sans-serif; font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 12px; }
+  .card .meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .card .tag {
+    font-family: system-ui, sans-serif;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 0.5px solid var(--border2);
+    color: var(--text2);
+    background: var(--bg2);
+  }
+
+  @media (max-width: 500px) { .shell { padding: 1rem 0.75rem 3rem; } .card h2 { font-size: 18px; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="site-header">
+    <h1>Tupara's Learning Hub</h1>
+    <p>Interactive lessons and quizzes to help with school</p>
+  </div>
+
+  <div class="cards">
+
+    <a class="card" href="year9_science.html">
+      <div class="card-subject science">Science</div>
+      <h2>Year 9 Science</h2>
+      <p class="desc">Lessons and quiz covering all the key Year 9 science topics — from lab safety and cells to forces, electricity, and ecosystems. Each topic has a lesson with worked examples plus quiz questions with instant feedback.</p>
+      <div class="meta">
+        <span class="tag">15 topics</span>
+        <span class="tag">104 questions</span>
+        <span class="tag">Lessons + Quiz</span>
+      </div>
+    </a>
+
+    <a class="card" href="prime_numbers.html">
+      <div class="card-subject maths">Maths</div>
+      <h2>Prime Numbers</h2>
+      <p class="desc">Learn how to identify primes, break numbers into prime factors using factor trees, write products of powers, find HCF and LCM, and simplify fractions — with step-by-step lessons and a 20-question quiz.</p>
+      <div class="meta">
+        <span class="tag">6 topics</span>
+        <span class="tag">20 questions</span>
+        <span class="tag">Lessons + Quiz</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+</body>
+</html>
