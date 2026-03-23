@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Year 9 Science Quiz</title>
+<title>Year 9 Science</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -14,17 +14,46 @@
     --green-bg: #eaf3de; --green-border: #c0dd97; --green-text: #3b6d11;
     --red-bg: #fcebeb; --red-border: #f7c1c1; --red-text: #791f1f;
     --amber-bg: #faeeda; --amber-border: #fac775; --amber-text: #633806;
+    --purple-bg: #f0e8f5; --purple-border: #c9b3db; --purple-text: #4a2068;
     --radius: 10px; --radius-sm: 6px;
   }
   body { font-family: Georgia, 'Times New Roman', serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
   .shell { max-width: 780px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
 
   /* Header */
-  .site-header { text-align: center; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid var(--border); }
+  .site-header { text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid var(--border); }
   .site-header h1 { font-size: 28px; font-weight: normal; letter-spacing: -0.5px; color: var(--text); }
   .site-header p { font-size: 14px; color: var(--text2); margin-top: 6px; font-family: system-ui, sans-serif; }
   .badge-row { display: flex; justify-content: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
   .badge { font-family: system-ui, sans-serif; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 0.5px solid var(--border2); color: var(--text2); background: var(--bg); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 0; margin-bottom: 2rem; border-bottom: 2px solid var(--border); }
+  .tab { font-family: system-ui, sans-serif; font-size: 14px; padding: 10px 24px; cursor: pointer; color: var(--text3); border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; }
+  .tab:hover { color: var(--text2); }
+  .tab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Lesson cards */
+  .lesson-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; }
+  .lesson-card h2 { font-size: 18px; font-weight: normal; margin-bottom: 10px; color: var(--text); }
+  .lesson-card h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: var(--text); font-family: system-ui, sans-serif; }
+  .lesson-card p, .lesson-card li { font-size: 14px; line-height: 1.7; color: var(--text2); font-family: system-ui, sans-serif; }
+  .lesson-card ul, .lesson-card ol { padding-left: 20px; margin: 8px 0; }
+  .lesson-card li { margin-bottom: 4px; }
+  .lesson-card .highlight { background: var(--purple-bg); border: 1px solid var(--purple-border); border-radius: var(--radius-sm); padding: 12px 16px; margin: 12px 0; }
+  .lesson-card .highlight p { color: var(--purple-text); font-weight: 500; }
+  .lesson-card .example { background: var(--blue-bg); border: 1px solid var(--blue-border); border-radius: var(--radius-sm); padding: 12px 16px; margin: 12px 0; }
+  .lesson-card .example p { color: var(--blue-text); }
+  .lesson-card .example .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 6px; }
+  .try-it { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: var(--radius-sm); padding: 14px 16px; margin: 12px 0; }
+  .try-it .label { font-family: system-ui, sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; color: var(--amber-text); margin-bottom: 8px; }
+  .try-it p { font-family: system-ui, sans-serif; font-size: 14px; color: var(--amber-text); }
+  .try-it .reveal-btn { font-family: system-ui, sans-serif; font-size: 12px; padding: 5px 12px; border-radius: var(--radius-sm); border: 1px solid var(--amber-border); background: var(--bg); cursor: pointer; color: var(--amber-text); margin-top: 8px; }
+  .try-it .reveal-btn:hover { background: var(--amber-bg); }
+  .try-it .answer { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--amber-border); }
+  .try-it .answer.show { display: block; }
 
   /* Progress */
   .progress-wrap { margin-bottom: 2rem; }
@@ -75,42 +104,578 @@
   .results-banner .stat { font-family: system-ui, sans-serif; font-size: 12px; color: var(--text3); }
   .results-banner .stat strong { display: block; font-size: 18px; color: var(--text); }
 
-  @media (max-width: 500px) { .shell { padding: 1rem 0.75rem 3rem; } .qtext { font-size: 14px; } }
+  @media (max-width: 500px) { .shell { padding: 1rem 0.75rem 3rem; } .qtext { font-size: 14px; } .tab { padding: 10px 16px; font-size: 13px; } }
 </style>
 </head>
 <body>
 <div class="shell">
   <div class="site-header">
-    <h1>Year 9 Science Quiz</h1>
-    <p>Select all correct answers, then check each question</p>
+    <h1>Year 9 Science</h1>
+    <p>Learn key concepts, then test yourself with the quiz</p>
     <div class="badge-row">
       <span class="badge">104 questions</span>
-      <span class="badge">Multi-select</span>
-      <span class="badge">10 topics</span>
+      <span class="badge">Lessons + Quiz</span>
+      <span class="badge">15 topics</span>
       <span class="badge">Age 13+</span>
     </div>
   </div>
 
-  <div class="progress-wrap">
-    <div class="progress-meta">
-      <span id="prog-label">0 of 104 checked</span>
-      <span id="score-label">Score: 0%</span>
-    </div>
-    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('lessons')">Lessons</button>
+    <button class="tab" onclick="switchTab('quiz')">Quiz</button>
   </div>
 
-  <div id="quiz-root"></div>
+  <!-- ═══════════════════ LESSONS TAB ═══════════════════ -->
+  <div id="tab-lessons" class="tab-content active">
 
-  <div class="controls">
-    <div class="score-display">Score: <strong id="live-score">—</strong></div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn" onclick="checkAll()">Check all</button>
-      <button class="btn primary" onclick="resetAll()">Retake quiz</button>
+    <!-- LAB SAFETY -->
+    <div class="lesson-card">
+      <h2>1. Lab safety &amp; hazards</h2>
+      <p>Working safely in the lab protects you and others. You must know the rules and recognise hazard symbols before handling any materials.</p>
+      <h3>Key safety rules</h3>
+      <ul>
+        <li>Always wear <strong>safety goggles</strong> when heating substances or using chemicals</li>
+        <li><strong>Tie long hair back</strong> and tuck in loose clothing</li>
+        <li>Point test tubes <strong>away from people</strong> when heating</li>
+        <li>Never taste or touch chemicals unless told to</li>
+        <li><strong>Wash hands</strong> after handling any chemicals</li>
+        <li>Keep bags and coats off the benches and away from walkways</li>
+      </ul>
+      <h3>Common hazard symbols</h3>
+      <div class="example">
+        <p class="label">Know these symbols</p>
+        <p><strong>Corrosive</strong> — burns skin and eyes (e.g. concentrated acids)</p>
+        <p><strong>Toxic</strong> — can cause serious illness or death</p>
+        <p><strong>Flammable</strong> — catches fire easily</p>
+        <p><strong>Irritant</strong> — causes redness or mild damage to skin/eyes</p>
+        <p><strong>Oxidising</strong> — can cause other materials to burn more fiercely</p>
+      </div>
+      <h3>If a chemical spills on your skin</h3>
+      <ol>
+        <li>Run the area under cold water <strong>immediately</strong> for at least 10 minutes</li>
+        <li>Tell the teacher straight away</li>
+        <li>Remove contaminated clothing if safe to do so</li>
+      </ol>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>A student is about to heat a test tube of liquid. What 3 safety precautions should they take?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>1.</strong> Wear safety goggles &nbsp; <strong>2.</strong> Point the tube away from people &nbsp; <strong>3.</strong> Tie long hair back</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- LAB EQUIPMENT -->
+    <div class="lesson-card">
+      <h2>2. Lab equipment</h2>
+      <p>Knowing which equipment to use — and how to use it correctly — is essential for accurate experiments.</p>
+      <h3>Measuring volume</h3>
+      <ul>
+        <li><strong>Measuring cylinder</strong> — most common, reads in ml</li>
+        <li><strong>Burette</strong> — very accurate, used in titrations</li>
+        <li><strong>Pipette</strong> — measures exact volumes</li>
+      </ul>
+      <p>Beakers and conical flasks have markings but are <strong>not accurate</strong> for measuring.</p>
+      <h3>Measuring mass</h3>
+      <ul>
+        <li><strong>Top-pan balance</strong> or <strong>electronic balance</strong> — measures in grams</li>
+        <li>A Newton meter measures <em>weight</em> (force), not mass</li>
+      </ul>
+      <h3>The Bunsen burner</h3>
+      <div class="example">
+        <p class="label">Two types of flame</p>
+        <p><strong>Yellow (safety) flame</strong> — air hole closed, visible but cooler, used when not heating</p>
+        <p><strong>Blue (roaring) flame</strong> — air hole open, hotter, used for heating</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>A student needs to separate sand from water. What equipment do they need?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>Filter paper</strong>, a <strong>funnel</strong>, a <strong>conical flask</strong> (to collect filtrate), and a <strong>glass rod</strong> (to guide the liquid).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CELLS -->
+    <div class="lesson-card">
+      <h2>3. Cells &amp; cell structure</h2>
+      <p>Cells are the building blocks of all living things. There are two main types: <strong>plant cells</strong> and <strong>animal cells</strong>.</p>
+      <h3>Structures in both plant and animal cells</h3>
+      <ul>
+        <li><strong>Cell membrane</strong> — controls what enters and leaves the cell</li>
+        <li><strong>Nucleus</strong> — contains DNA, controls the cell's activities</li>
+        <li><strong>Cytoplasm</strong> — jelly-like substance where chemical reactions happen</li>
+        <li><strong>Mitochondria</strong> — site of aerobic respiration, releases energy</li>
+        <li><strong>Ribosomes</strong> — where proteins are made</li>
+      </ul>
+      <h3>Extra structures in plant cells only</h3>
+      <ul>
+        <li><strong>Cell wall</strong> — made of cellulose, gives rigid shape</li>
+        <li><strong>Chloroplasts</strong> — contain chlorophyll for photosynthesis</li>
+        <li><strong>Large permanent vacuole</strong> — filled with cell sap, keeps cell turgid</li>
+      </ul>
+      <div class="highlight">
+        <p>Prokaryotic cells (bacteria) have NO membrane-bound nucleus. They are smaller and simpler than eukaryotic cells, with a circular chromosome.</p>
+      </div>
+      <h3>How substances move in and out of cells</h3>
+      <div class="example">
+        <p class="label">Three key processes</p>
+        <p><strong>Diffusion</strong> — particles move from high to low concentration (no energy needed)</p>
+        <p><strong>Osmosis</strong> — water moves through a partially permeable membrane from dilute to concentrated solution</p>
+        <p><strong>Active transport</strong> — substances move against the concentration gradient (requires energy)</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Name 3 structures found in plant cells but NOT animal cells.</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>Cell wall</strong>, <strong>chloroplasts</strong>, and <strong>large permanent vacuole</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERIODIC TABLE -->
+    <div class="lesson-card">
+      <h2>4. The periodic table</h2>
+      <p>The periodic table organises all known elements by their <strong>atomic number</strong> (number of protons).</p>
+      <h3>How it's organised</h3>
+      <ul>
+        <li><strong>Periods</strong> — rows going across (1–7)</li>
+        <li><strong>Groups</strong> — columns going down (0–7). Elements in the same group have similar properties because they have the same number of <strong>outer electrons</strong></li>
+        <li>Metals are on the <strong>left and centre</strong>; non-metals on the <strong>right</strong></li>
+      </ul>
+      <h3>Key groups</h3>
+      <div class="example">
+        <p class="label">Important groups to know</p>
+        <p><strong>Group 1 — Alkali metals</strong> (Li, Na, K, Rb, Cs, Fr): soft, reactive metals that react vigorously with water. Reactivity increases going down.</p>
+        <p><strong>Group 7 — Halogens</strong> (F, Cl, Br, I, At): reactive non-metals that exist as diatomic molecules. Reactivity decreases going down.</p>
+        <p><strong>Group 0 — Noble gases</strong> (He, Ne, Ar, Kr, Xe, Rn): very unreactive because they have a full outer shell. They exist as single atoms.</p>
+      </div>
+      <h3>Atomic structure</h3>
+      <ul>
+        <li><strong>Protons</strong> (positive, in nucleus) — atomic number = number of protons</li>
+        <li><strong>Neutrons</strong> (no charge, in nucleus)</li>
+        <li><strong>Electrons</strong> (negative, in shells around nucleus)</li>
+      </ul>
+      <div class="highlight">
+        <p>Isotopes are atoms of the same element with the same number of protons but different numbers of neutrons.</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Why do elements in the same group have similar chemical properties?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>They have the <strong>same number of electrons in their outer shell</strong>, and it's the outer electrons that determine how an element reacts.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORCES & MOTION -->
+    <div class="lesson-card">
+      <h2>5. Forces &amp; motion</h2>
+      <p>A <strong>force</strong> is a push or pull that can change an object's speed, direction or shape. Forces are measured in <strong>Newtons (N)</strong>.</p>
+      <h3>Types of force</h3>
+      <ul>
+        <li><strong>Contact forces</strong> — require touching: friction, air resistance, tension, normal reaction</li>
+        <li><strong>Non-contact forces</strong> — act at a distance: gravity, magnetism, electrostatic</li>
+      </ul>
+      <h3>Newton's Laws</h3>
+      <div class="example">
+        <p class="label">The three laws</p>
+        <p><strong>1st Law:</strong> An object stays at rest or moves at constant velocity unless an unbalanced force acts on it.</p>
+        <p><strong>2nd Law:</strong> Force = mass &times; acceleration (F = ma)</p>
+        <p><strong>3rd Law:</strong> Every action has an equal and opposite reaction.</p>
+      </div>
+      <h3>Speed and velocity</h3>
+      <ul>
+        <li><strong>Speed</strong> = distance &divide; time (scalar — no direction)</li>
+        <li><strong>Velocity</strong> = speed + direction (vector)</li>
+        <li>A car going round a roundabout at constant speed has <strong>changing velocity</strong> because direction changes</li>
+      </ul>
+      <h3>Stopping distance</h3>
+      <p><strong>Stopping distance = thinking distance + braking distance</strong></p>
+      <p>Affected by: speed, road conditions, tyre condition, driver reaction time, and mass of the vehicle.</p>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>A car is travelling at constant speed along a straight road. What can you say about the forces acting on it?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>The forces are <strong>balanced</strong>. The driving force equals the friction/air resistance. The resultant force is <strong>zero</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ELECTRICITY -->
+    <div class="lesson-card">
+      <h2>6. Electricity &amp; circuits</h2>
+      <p>Electric current is the flow of charge (electrons) around a circuit. It needs a complete circuit to flow.</p>
+      <h3>Series vs parallel circuits</h3>
+      <div class="example">
+        <p class="label">Key differences</p>
+        <p><strong>Series:</strong> One loop. Current is the same everywhere. Voltage is shared. If one component breaks, everything stops.</p>
+        <p><strong>Parallel:</strong> Multiple branches. Voltage is the same across each branch. Current splits at junctions. If one branch breaks, others still work.</p>
+      </div>
+      <h3>Key quantities</h3>
+      <ul>
+        <li><strong>Current (I)</strong> — measured in Amps (A) with an ammeter (connected in series)</li>
+        <li><strong>Voltage (V)</strong> — measured in Volts (V) with a voltmeter (connected in parallel)</li>
+        <li><strong>Resistance (R)</strong> — measured in Ohms (&Omega;)</li>
+      </ul>
+      <div class="highlight">
+        <p>Resistance = Voltage &divide; Current &nbsp; (R = V / I) &nbsp;&nbsp; Power = Voltage &times; Current &nbsp; (P = V &times; I)</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Why are household appliances connected in parallel rather than series?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>So each appliance gets the <strong>full mains voltage</strong>, and if one breaks or is switched off, the <strong>others continue to work</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHEMICAL REACTIONS -->
+    <div class="lesson-card">
+      <h2>7. Chemical reactions</h2>
+      <p>In a chemical reaction, atoms are <strong>rearranged</strong> to form new substances. No atoms are created or destroyed — mass is <strong>conserved</strong>.</p>
+      <h3>Signs a reaction has occurred</h3>
+      <ul>
+        <li>Colour change</li>
+        <li>Gas produced (bubbles)</li>
+        <li>Temperature change (hotter or colder)</li>
+        <li>Precipitate (solid) forms</li>
+        <li>Light or sound given off</li>
+      </ul>
+      <h3>Exothermic vs endothermic</h3>
+      <div class="example">
+        <p class="label">Energy changes</p>
+        <p><strong>Exothermic</strong> — releases energy, surroundings get warmer (combustion, neutralisation, respiration)</p>
+        <p><strong>Endothermic</strong> — absorbs energy, surroundings get cooler (photosynthesis, thermal decomposition)</p>
+      </div>
+      <h3>Rates of reaction</h3>
+      <p>Reactions are faster when there are more frequent and energetic <strong>collisions</strong> between particles.</p>
+      <p>Factors: <strong>temperature</strong>, <strong>concentration</strong>, <strong>surface area</strong>, <strong>catalysts</strong>, <strong>pressure</strong> (for gases).</p>
+      <div class="highlight">
+        <p>A catalyst speeds up a reaction without being used up. It lowers the activation energy. Enzymes are biological catalysts.</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Why does cutting a solid reactant into smaller pieces speed up the reaction?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>It increases the <strong>surface area</strong>, so more particles are exposed, leading to <strong>more frequent collisions</strong> and a faster rate of reaction.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACIDS -->
+    <div class="lesson-card">
+      <h2>8. Acids, alkalis &amp; pH</h2>
+      <p>The <strong>pH scale</strong> runs from 0 to 14. It tells you how acidic or alkaline a substance is.</p>
+      <div class="example">
+        <p class="label">The pH scale</p>
+        <p><strong>pH 0–6</strong> = Acid (lower = stronger acid)</p>
+        <p><strong>pH 7</strong> = Neutral (pure water)</p>
+        <p><strong>pH 8–14</strong> = Alkali (higher = stronger alkali)</p>
+      </div>
+      <h3>Indicators</h3>
+      <ul>
+        <li><strong>Litmus</strong> — red in acid, blue in alkali</li>
+        <li><strong>Universal indicator</strong> — gives a colour for every pH value (red/orange in acid, green at neutral, blue/purple in alkali)</li>
+        <li><strong>Methyl orange</strong> — red in acid, yellow in alkali</li>
+      </ul>
+      <h3>Key reactions</h3>
+      <div class="example">
+        <p class="label">Neutralisation</p>
+        <p><strong>Acid + Alkali &rarr; Salt + Water</strong></p>
+        <p><strong>Acid + Metal &rarr; Salt + Hydrogen</strong> (test: squeaky pop with a lit splint)</p>
+        <p><strong>Acid + Carbonate &rarr; Salt + Water + Carbon dioxide</strong> (test: limewater turns cloudy)</p>
+        <p><strong>Acid + Metal oxide &rarr; Salt + Water</strong></p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>What is produced when hydrochloric acid reacts with sodium hydroxide?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>Sodium chloride (salt) + water</strong>. This is a neutralisation reaction.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATES OF MATTER -->
+    <div class="lesson-card">
+      <h2>9. States of matter</h2>
+      <p>All matter exists in one of three states: <strong>solid</strong>, <strong>liquid</strong>, or <strong>gas</strong>. The state depends on how the particles are arranged and how much energy they have.</p>
+      <div class="example">
+        <p class="label">Comparing the three states</p>
+        <p><strong>Solid:</strong> Particles vibrate in fixed positions. Fixed shape. Fixed volume. Cannot be compressed.</p>
+        <p><strong>Liquid:</strong> Particles move past each other. Takes the shape of the container. Fixed volume. Almost incompressible.</p>
+        <p><strong>Gas:</strong> Particles move quickly and randomly. Fills the container. No fixed volume. Can be compressed. Low density.</p>
+      </div>
+      <h3>Changes of state</h3>
+      <ul>
+        <li><strong>Melting</strong> (solid &rarr; liquid) — absorbs energy</li>
+        <li><strong>Evaporation/Boiling</strong> (liquid &rarr; gas) — absorbs energy</li>
+        <li><strong>Condensation</strong> (gas &rarr; liquid) — releases energy</li>
+        <li><strong>Freezing</strong> (liquid &rarr; solid) — releases energy</li>
+      </ul>
+      <div class="highlight">
+        <p>During a change of state of a pure substance, the temperature stays constant even though energy is being supplied — the energy breaks bonds between particles.</p>
+      </div>
+      <h3>Separation techniques</h3>
+      <ul>
+        <li><strong>Filtration</strong> — separates insoluble solid from liquid</li>
+        <li><strong>Evaporation</strong> — recovers dissolved solid from solution</li>
+        <li><strong>Distillation</strong> — separates solvent from solution</li>
+        <li><strong>Chromatography</strong> — separates mixtures of dyes/inks</li>
+      </ul>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Why does evaporation cause a liquid to cool down?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>The <strong>fastest-moving particles</strong> escape from the surface, leaving behind the slower (cooler) particles. This lowers the average energy of the remaining liquid.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPRODUCTION & GENETICS -->
+    <div class="lesson-card">
+      <h2>10. Reproduction &amp; genetics</h2>
+      <h3>Sexual vs asexual reproduction</h3>
+      <div class="example">
+        <p class="label">Two types</p>
+        <p><strong>Sexual:</strong> Two parents, fusion of gametes (sperm + egg = zygote), offspring are genetically different, produces variation.</p>
+        <p><strong>Asexual:</strong> One parent, no gametes, offspring are genetically identical (clones). Used by bacteria and some plants.</p>
+      </div>
+      <h3>DNA, chromosomes and genes</h3>
+      <ul>
+        <li><strong>DNA</strong> is a double helix molecule found in the nucleus</li>
+        <li><strong>Chromosomes</strong> are long coiled-up pieces of DNA — humans have <strong>23 pairs (46 total)</strong></li>
+        <li><strong>Genes</strong> are sections of DNA that code for a specific protein/characteristic</li>
+        <li><strong>Alleles</strong> are different versions of the same gene</li>
+      </ul>
+      <h3>Inheritance of sex</h3>
+      <p>Females = <strong>XX</strong>, Males = <strong>XY</strong>. The father's sperm determines the sex (X or Y). There is a <strong>50% chance</strong> of boy or girl.</p>
+      <div class="highlight">
+        <p>Dominant alleles are always expressed when present. Recessive alleles are only expressed when two copies are present (homozygous recessive).</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Why does sexual reproduction produce more variation than asexual reproduction?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>Because offspring receive a <strong>mix of genes from two parents</strong>, creating unique combinations. Asexual reproduction produces clones with no genetic variation.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIGHT & SOUND -->
+    <div class="lesson-card">
+      <h2>11. Light &amp; sound</h2>
+      <h3>Reflection</h3>
+      <ul>
+        <li>The <strong>angle of incidence = angle of reflection</strong> (measured from the normal)</li>
+        <li>A plane mirror produces a <strong>virtual image</strong> that is the same size as the object</li>
+      </ul>
+      <h3>Refraction</h3>
+      <p>Light bends when it passes from one material to another because it <strong>changes speed</strong>. It bends towards the normal when slowing down (e.g. air &rarr; glass).</p>
+      <h3>The electromagnetic spectrum</h3>
+      <div class="example">
+        <p class="label">From longest to shortest wavelength</p>
+        <p><strong>Radio &rarr; Microwave &rarr; Infrared &rarr; Visible &rarr; Ultraviolet &rarr; X-ray &rarr; Gamma</strong></p>
+        <p>All EM waves travel at the <strong>same speed</strong> in a vacuum (speed of light).</p>
+      </div>
+      <h3>Sound waves</h3>
+      <ul>
+        <li>Sound is a <strong>longitudinal wave</strong> — needs a medium (cannot travel in a vacuum)</li>
+        <li>Sound travels fastest in <strong>solids</strong>, slowest in <strong>gases</strong></li>
+        <li><strong>Pitch</strong> depends on frequency; <strong>volume</strong> depends on amplitude</li>
+      </ul>
+      <h3>Wave properties</h3>
+      <div class="highlight">
+        <p>Wave speed = frequency &times; wavelength &nbsp;&nbsp; (v = f &times; &lambda;)</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Why can't sound travel through space?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>Sound is a <strong>mechanical wave</strong> that needs particles to vibrate. Space is a <strong>vacuum</strong> with no particles.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- HUMAN BODY SYSTEMS -->
+    <div class="lesson-card">
+      <h2>12. Human body systems</h2>
+      <h3>Circulatory system</h3>
+      <ul>
+        <li>The heart has <strong>4 chambers</strong>: two atria (top) and two ventricles (bottom)</li>
+        <li><strong>Right side</strong> pumps blood to the lungs; <strong>left side</strong> pumps blood to the body</li>
+        <li><strong>Arteries</strong> carry blood away from the heart; <strong>veins</strong> carry blood back</li>
+        <li>Blood contains: red blood cells (oxygen), white blood cells (immunity), platelets (clotting), plasma (transport)</li>
+      </ul>
+      <h3>Respiratory system</h3>
+      <ul>
+        <li>Gas exchange happens in the <strong>alveoli</strong> — O₂ into blood, CO₂ out</li>
+        <li>Alveoli are efficient because: large surface area, thin walls, good blood supply, moist surfaces</li>
+      </ul>
+      <h3>Digestive system</h3>
+      <ul>
+        <li><strong>Enzymes</strong> break down large food molecules into small ones for absorption</li>
+        <li>Mouth (amylase &rarr; starch), stomach (acid + protease), small intestine (absorbs nutrients), liver (produces bile)</li>
+      </ul>
+      <h3>Nervous system</h3>
+      <div class="example">
+        <p class="label">Signal pathway</p>
+        <p><strong>Stimulus &rarr; Receptor &rarr; Sensory neuron &rarr; Brain/Spinal cord &rarr; Motor neuron &rarr; Effector &rarr; Response</strong></p>
+        <p>Synapses are tiny gaps between neurons where chemicals carry the signal across.</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Name 3 features of alveoli that make them efficient for gas exchange.</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>Large surface area</strong>, <strong>thin walls</strong> (short diffusion distance), and <strong>good blood supply</strong> (maintains concentration gradient).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENERGY -->
+    <div class="lesson-card">
+      <h2>13. Energy</h2>
+      <p>Energy cannot be created or destroyed — it is <strong>transferred</strong> between stores. This is the <strong>law of conservation of energy</strong>.</p>
+      <h3>Energy stores</h3>
+      <div class="example">
+        <p class="label">The main stores</p>
+        <p><strong>Chemical</strong> (food, fuel, batteries) &bull; <strong>Kinetic</strong> (moving objects) &bull; <strong>Gravitational potential</strong> (objects at height) &bull; <strong>Thermal</strong> (warm objects) &bull; <strong>Elastic potential</strong> (stretched/compressed) &bull; <strong>Nuclear</strong> (atoms)</p>
+      </div>
+      <h3>Energy transfer pathways</h3>
+      <p>Energy moves between stores by: <strong>heating</strong>, <strong>radiation</strong> (light, sound), <strong>electrical work</strong>, and <strong>mechanical work</strong> (forces).</p>
+      <h3>Energy resources</h3>
+      <ul>
+        <li><strong>Renewable</strong>: solar, wind, tidal, hydroelectric, geothermal, biomass — won't run out</li>
+        <li><strong>Non-renewable</strong>: coal, oil, natural gas, nuclear fuel — will run out</li>
+      </ul>
+      <div class="highlight">
+        <p>Burning fossil fuels releases CO₂ (greenhouse gas) and contributes to climate change. They took millions of years to form from ancient organisms.</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Describe the energy transfers when a ball is thrown upwards.</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>Chemical</strong> (muscles) &rarr; <strong>kinetic</strong> (ball moving) &rarr; <strong>gravitational potential</strong> (ball at height). Some energy is transferred to <strong>thermal</strong> (air resistance).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ECOLOGY -->
+    <div class="lesson-card">
+      <h2>14. Ecology &amp; ecosystems</h2>
+      <h3>Food chains</h3>
+      <p>Food chains show the flow of energy: <strong>Producer &rarr; Primary consumer &rarr; Secondary consumer &rarr; Tertiary consumer</strong></p>
+      <p>Arrows show the direction of <strong>energy transfer</strong>. The Sun provides the initial energy.</p>
+      <h3>Photosynthesis</h3>
+      <div class="example">
+        <p class="label">The equation</p>
+        <p><strong>Carbon dioxide + Water &rarr; Glucose + Oxygen</strong> (using light energy, in chloroplasts)</p>
+        <p>6CO₂ + 6H₂O &rarr; C₆H₁₂O₆ + 6O₂</p>
+      </div>
+      <h3>Aerobic respiration</h3>
+      <div class="example">
+        <p class="label">The equation</p>
+        <p><strong>Glucose + Oxygen &rarr; Carbon dioxide + Water</strong> (releases energy, in mitochondria)</p>
+        <p>C₆H₁₂O₆ + 6O₂ &rarr; 6CO₂ + 6H₂O</p>
+      </div>
+      <h3>The carbon cycle</h3>
+      <p>Carbon moves through ecosystems: photosynthesis <strong>removes</strong> CO₂; respiration, combustion, and decomposition <strong>release</strong> CO₂.</p>
+      <h3>Biodiversity threats</h3>
+      <p>Habitat destruction, pollution, overexploitation, climate change, and invasive species all reduce biodiversity.</p>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>How are photosynthesis and respiration opposite processes?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>Photosynthesis uses CO₂ and water to make glucose and oxygen. Respiration uses glucose and oxygen to release CO₂ and water. They are the <strong>reverse</strong> of each other.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- EARTH & SPACE -->
+    <div class="lesson-card">
+      <h2>15. Earth &amp; space</h2>
+      <h3>Structure of the Earth</h3>
+      <ul>
+        <li><strong>Crust</strong> — thin outer layer, made of tectonic plates</li>
+        <li><strong>Mantle</strong> — thick layer of semi-molten rock</li>
+        <li><strong>Outer core</strong> — liquid iron and nickel</li>
+        <li><strong>Inner core</strong> — solid iron and nickel, hottest part</li>
+      </ul>
+      <p>Tectonic plates float on the mantle and can cause earthquakes and volcanoes at plate boundaries.</p>
+      <h3>The rock cycle</h3>
+      <div class="example">
+        <p class="label">Three types of rock</p>
+        <p><strong>Igneous</strong> — formed when magma cools and solidifies (e.g. granite, basalt)</p>
+        <p><strong>Sedimentary</strong> — formed from compressed sediments over time (e.g. limestone, sandstone). Contains fossils.</p>
+        <p><strong>Metamorphic</strong> — formed when existing rock is changed by heat and pressure (e.g. marble, slate)</p>
+      </div>
+      <h3>The greenhouse effect</h3>
+      <p>Greenhouse gases (CO₂, methane, water vapour) trap heat in the atmosphere. Human activities — burning fossil fuels, deforestation — are increasing CO₂ levels, causing <strong>global warming</strong>.</p>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>What type of rock contains fossils, and how does it form?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>Sedimentary rock</strong>. It forms when layers of sediment (sand, mud, dead organisms) are deposited over millions of years and compressed by pressure.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════ QUIZ TAB ═══════════════════ -->
+  <div id="tab-quiz" class="tab-content">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="prog-label">0 of 104 checked</span>
+        <span id="score-label">Score: 0%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <div id="quiz-root"></div>
+
+    <div class="controls">
+      <div class="score-display">Score: <strong id="live-score">—</strong></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" onclick="checkAll()">Check all</button>
+        <button class="btn primary" onclick="resetAll()">Retake quiz</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
+/* ── Tab switching ── */
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelector('.tab[onclick*="' + name + '"]').classList.add('active');
+}
+
+/* ── Lesson reveal buttons ── */
+function reveal(btn) {
+  const ans = btn.nextElementSibling;
+  ans.classList.toggle('show');
+  btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+}
+
+/* ── Quiz data ── */
 const ALL_QUESTIONS = [
   // ── LAB SAFETY & HAZARDS ──────────────────────────────────────────────────
   {topic:"Lab safety & hazards",q:"Which of the following are correct safety precautions when working in a science lab?",hint:"Think about protecting your body and your workspace.",options:["Wear safety goggles when heating substances","Tie long hair back","Point test tubes away from people when heating","Keep bags on the lab benches","Taste unknown chemicals to identify them","Wash hands after handling chemicals"],correct:[0,1,2,5]},
@@ -247,6 +812,7 @@ const ALL_QUESTIONS = [
   {topic:"Ecology & ecosystems",q:"Which of the following correctly describe factors that affect population size?",hint:"Populations change due to many interacting factors.",options:["Food availability affects population size","Predation can limit prey population size","Disease can reduce population size","Migration has no effect on population size","Competition for resources affects population size","A population grows indefinitely if there are no predators"],correct:[0,1,2,4]}
 ];
 
+/* ── State ── */
 let state = ALL_QUESTIONS.map(() => ({ selected: new Set(), checked: false }));
 
 function getTopics() {
@@ -266,15 +832,12 @@ function toggle(qi, oi) {
 function checkQ(qi) {
   state[qi].checked = true;
   renderQuestion(qi);
-  document.getElementById(`chkbtn-${qi}`).classList.add('done');
-  document.getElementById(`chkbtn-${qi}`).disabled = true;
   updateProgress();
 }
 
 function checkAll() {
   ALL_QUESTIONS.forEach((_, qi) => { state[qi].checked = true; });
-  document.querySelectorAll('.check-btn').forEach(b => { b.classList.add('done'); b.disabled = true; });
-  document.querySelectorAll('.qcard').forEach((card, qi) => renderQuestionInPlace(qi));
+  ALL_QUESTIONS.forEach((_, qi) => renderQuestion(qi));
   updateProgress();
 }
 
@@ -333,11 +896,6 @@ function renderQuestion(qi) {
   if (el) el.outerHTML = questionHTML(qi);
 }
 
-function renderQuestionInPlace(qi) {
-  const el = document.getElementById(`q-${qi}`);
-  if (el) el.outerHTML = questionHTML(qi);
-}
-
 function questionHTML(qi) {
   const q = ALL_QUESTIONS[qi];
   const s = state[qi];
@@ -354,7 +912,7 @@ function questionHTML(qi) {
     <div class="qtext">${q.q}</div>
     <div class="hint">${q.hint}</div>
     <div class="options">${opts}</div>
-    <button class="check-btn${s.checked?' done':''}" id="chkbtn-${qi}" onclick="checkQ(${qi})" ${s.checked?'disabled':''}>Check answer</button>
+    <button class="check-btn${s.checked?' done':''}" onclick="checkQ(${qi})" ${s.checked?'disabled':''}>Check answer</button>
   </div>`;
 }
 

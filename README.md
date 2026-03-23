@@ -4,9 +4,9 @@ A collection of interactive learning tools to help Tupara with his school lesson
 
 ## Contents
 
-### Science Quiz
+### Year 9 Science
 
-[Science Quiz](https://peterAkuhata.github.io/tupara-learnings/science_quiz.html) — An interactive Year 9 Science Quiz with 104 multi-select questions across 15 topics:
+[Year 9 Science](https://peterAkuhata.github.io/tupara-learnings/science_quiz.html) — Interactive lessons and a 104-question quiz across 15 topics:
 
 - Lab safety & hazards
 - Lab equipment
@@ -24,7 +24,7 @@ A collection of interactive learning tools to help Tupara with his school lesson
 - Ecology & ecosystems
 - Earth & space
 
-Click the link above to start the quiz. It includes real-time progress tracking, score calculation, and visual feedback on answers.
+Includes a Lessons tab with key concepts and interactive examples, plus a Quiz tab with progress tracking and scoring.
 
 ### Prime Numbers
 
