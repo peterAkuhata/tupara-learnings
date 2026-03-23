@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Te Reo Māori — Tupara's Learning Hub</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f5f3; --bg3: #eeece8;
+    --text: #1a1a18; --text2: #5a5a56; --text3: #9a9a94;
+    --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+    --blue-bg: #e6f1fb; --blue-border: #b5d4f4; --blue-text: #0c447c;
+    --green-bg: #eaf3de; --green-border: #c0dd97; --green-text: #3b6d11;
+    --red-bg: #fcebeb; --red-border: #f7c1c1; --red-text: #791f1f;
+    --amber-bg: #faeeda; --amber-border: #fac775; --amber-text: #633806;
+    --purple-bg: #f0e8f5; --purple-border: #c9b3db; --purple-text: #4a2068;
+    --teal-bg: #e4f3f0; --teal-border: #a3d5cc; --teal-text: #1a5c4f;
+    --radius: 10px; --radius-sm: 6px;
+  }
+  body { font-family: Georgia, 'Times New Roman', serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
+  .shell { max-width: 780px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+  .site-header { text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid var(--border); }
+  .site-header h1 { font-size: 28px; font-weight: normal; letter-spacing: -0.5px; color: var(--text); }
+  .site-header p { font-size: 14px; color: var(--text2); margin-top: 6px; font-family: system-ui, sans-serif; }
+  .badge-row { display: flex; justify-content: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .badge { font-family: system-ui, sans-serif; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 0.5px solid var(--border2); color: var(--text2); background: var(--bg); }
+
+  .tabs { display: flex; gap: 0; margin-bottom: 2rem; border-bottom: 2px solid var(--border); }
+  .tab { font-family: system-ui, sans-serif; font-size: 14px; padding: 10px 24px; cursor: pointer; color: var(--text3); border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; }
+  .tab:hover { color: var(--text2); }
+  .tab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 500; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .lesson-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; }
+  .lesson-card h2 { font-size: 18px; font-weight: normal; margin-bottom: 10px; color: var(--text); }
+  .lesson-card h3 { font-size: 15px; font-weight: 600; margin: 16px 0 8px; color: var(--text); font-family: system-ui, sans-serif; }
+  .lesson-card p, .lesson-card li { font-size: 14px; line-height: 1.7; color: var(--text2); font-family: system-ui, sans-serif; }
+  .lesson-card ul, .lesson-card ol { padding-left: 20px; margin: 8px 0; }
+  .lesson-card li { margin-bottom: 4px; }
+  .lesson-card .highlight { background: var(--teal-bg); border: 1px solid var(--teal-border); border-radius: var(--radius-sm); padding: 12px 16px; margin: 12px 0; }
+  .lesson-card .highlight p { color: var(--teal-text); font-weight: 500; }
+  .lesson-card .example { background: var(--blue-bg); border: 1px solid var(--blue-border); border-radius: var(--radius-sm); padding: 12px 16px; margin: 12px 0; }
+  .lesson-card .example p { color: var(--blue-text); }
+  .lesson-card .example .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 6px; }
+  .vocab-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-family: system-ui, sans-serif; font-size: 14px; }
+  .vocab-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--text2); }
+  .vocab-table td:first-child { font-weight: 600; color: var(--text); width: 40%; }
+  .vocab-table tr:last-child td { border-bottom: none; }
+  .try-it { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: var(--radius-sm); padding: 14px 16px; margin: 12px 0; }
+  .try-it .label { font-family: system-ui, sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; color: var(--amber-text); margin-bottom: 8px; }
+  .try-it p { font-family: system-ui, sans-serif; font-size: 14px; color: var(--amber-text); }
+  .try-it .reveal-btn { font-family: system-ui, sans-serif; font-size: 12px; padding: 5px 12px; border-radius: var(--radius-sm); border: 1px solid var(--amber-border); background: var(--bg); cursor: pointer; color: var(--amber-text); margin-top: 8px; }
+  .try-it .reveal-btn:hover { background: var(--amber-bg); }
+  .try-it .answer { display: none; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--amber-border); }
+  .try-it .answer.show { display: block; }
+
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-meta { display: flex; justify-content: space-between; font-family: system-ui, sans-serif; font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+  .prog-bar { height: 3px; background: var(--border); border-radius: 2px; }
+  .prog-fill { height: 3px; background: var(--text2); border-radius: 2px; transition: width 0.4s ease; }
+
+  .topic-label { font-family: system-ui, sans-serif; font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin: 2rem 0 0.75rem; }
+  .topic-label:first-of-type { margin-top: 0; }
+
+  .qcard { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 0.75rem; }
+  .qnum { font-family: system-ui, sans-serif; font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+  .qtext { font-size: 15px; line-height: 1.6; color: var(--text); margin-bottom: 10px; }
+  .hint { font-family: system-ui, sans-serif; font-size: 12px; color: var(--text3); font-style: italic; margin-bottom: 12px; }
+  .options { display: flex; flex-direction: column; gap: 7px; }
+  .opt { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 0.5px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; transition: background 0.12s, border-color 0.12s; font-family: system-ui, sans-serif; font-size: 13.5px; color: var(--text); }
+  .opt:hover { background: var(--bg2); border-color: var(--border2); }
+  .opt.selected { background: var(--blue-bg); border-color: var(--blue-border); color: var(--blue-text); }
+  .opt.correct  { background: var(--green-bg); border-color: var(--green-border); color: var(--green-text); }
+  .opt.wrong    { background: var(--red-bg); border-color: var(--red-border); color: var(--red-text); }
+  .opt.missed   { background: var(--amber-bg); border-color: var(--amber-border); color: var(--amber-text); }
+  .opt.disabled { cursor: default; }
+  .cb { width: 16px; height: 16px; border: 1.5px solid var(--border2); border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+  .opt.selected .cb { background: var(--blue-text); border-color: var(--blue-text); color: #fff; }
+  .opt.correct  .cb { background: var(--green-text); border-color: var(--green-text); color: #fff; }
+  .opt.wrong    .cb { background: var(--red-text); border-color: var(--red-text); color: #fff; }
+  .opt.missed   .cb { background: var(--amber-text); border-color: var(--amber-text); color: #fff; }
+  .check-btn { margin-top: 12px; font-family: system-ui, sans-serif; font-size: 12px; padding: 6px 14px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); background: transparent; cursor: pointer; color: var(--text2); transition: background 0.12s; }
+  .check-btn:hover { background: var(--bg2); }
+  .check-btn.done { opacity: 0.4; cursor: default; }
+
+  .controls { position: sticky; bottom: 0; background: rgba(238,236,232,0.95); backdrop-filter: blur(8px); border-top: 0.5px solid var(--border); padding: 1rem 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 2rem; }
+  .score-display { font-family: system-ui, sans-serif; font-size: 13px; color: var(--text2); }
+  .score-display strong { color: var(--text); font-size: 16px; }
+  .btn { font-family: system-ui, sans-serif; font-size: 13px; padding: 8px 18px; border-radius: var(--radius-sm); border: 0.5px solid var(--border2); background: var(--bg); cursor: pointer; color: var(--text); transition: background 0.12s; }
+  .btn:hover { background: var(--bg2); }
+  .btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .btn.primary:hover { opacity: 0.8; }
+
+  .back-link { font-family: system-ui, sans-serif; font-size: 13px; color: var(--text3); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; margin-bottom: 1rem; }
+  .back-link:hover { color: var(--text2); }
+
+  @media (max-width: 500px) { .shell { padding: 1rem 0.75rem 3rem; } .qtext { font-size: 14px; } .tab { padding: 10px 16px; font-size: 13px; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <a href="index.html" class="back-link">&larr; Back to Learning Hub</a>
+  <div class="site-header">
+    <h1>Te Reo Māori</h1>
+    <p>Learn te reo Māori — greetings, vocabulary, sentence structures, and tikanga</p>
+    <div class="badge-row">
+      <span class="badge">Year 9</span>
+      <span class="badge">Lessons + Quiz</span>
+      <span class="badge">20 questions</span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('lessons')">Lessons</button>
+    <button class="tab" onclick="switchTab('quiz')">Quiz</button>
+  </div>
+
+  <!-- ═══════════════════ LESSONS TAB ═══════════════════ -->
+  <div id="tab-lessons" class="tab-content active">
+
+    <!-- 1. GREETINGS & INTRODUCTIONS -->
+    <div class="lesson-card">
+      <h2>1. Ngā mihi — Greetings &amp; introductions</h2>
+      <p>Greetings are the foundation of te reo Māori. In Māori culture, how you greet someone shows respect and connection.</p>
+      <h3>Common greetings</h3>
+      <table class="vocab-table">
+        <tr><td>Kia ora</td><td>Hello (to one person) / Thank you</td></tr>
+        <tr><td>Kia ora kōrua</td><td>Hello (to two people)</td></tr>
+        <tr><td>Kia ora koutou</td><td>Hello (to three or more people)</td></tr>
+        <tr><td>Mōrena</td><td>Good morning</td></tr>
+        <tr><td>Tēnā koe</td><td>Formal greeting (to one person)</td></tr>
+        <tr><td>Tēnā kōrua</td><td>Formal greeting (to two people)</td></tr>
+        <tr><td>Tēnā koutou</td><td>Formal greeting (to three or more)</td></tr>
+      </table>
+      <h3>Farewells</h3>
+      <table class="vocab-table">
+        <tr><td>Ka kite anō</td><td>See you again</td></tr>
+        <tr><td>Haere rā</td><td>Goodbye (to someone leaving)</td></tr>
+        <tr><td>E noho rā</td><td>Goodbye (to someone staying)</td></tr>
+        <tr><td>Hei konā mai</td><td>See you later (casual)</td></tr>
+      </table>
+      <div class="highlight">
+        <p>Key rule: The greeting changes depending on how many people you are speaking to — koe (1), kōrua (2), koutou (3+).</p>
+      </div>
+      <h3>Introducing yourself (Mihimihi)</h3>
+      <div class="example">
+        <p class="label">Example mihimihi</p>
+        <p><strong>Ko Tupara tōku ingoa.</strong> — My name is Tupara.</p>
+        <p><strong>Nō Aotearoa ahau.</strong> — I am from New Zealand.</p>
+        <p><strong>Kei Tāmaki Makaurau ahau e noho ana.</strong> — I live in Auckland.</p>
+        <p><strong>Ko [mountain] tōku maunga.</strong> — [Mountain] is my mountain.</p>
+        <p><strong>Ko [river] tōku awa.</strong> — [River] is my river.</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>How would you say "Hello" to your class of 25 students?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>Kia ora koutou</strong> — because you are greeting three or more people.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. PRONOUNS -->
+    <div class="lesson-card">
+      <h2>2. Ngā tūingoa — Pronouns</h2>
+      <p>Māori pronouns are more specific than English — they distinguish between one person, two people, and three or more.</p>
+      <h3>Personal pronouns</h3>
+      <table class="vocab-table">
+        <tr><td>Au / Ahau</td><td>I / me</td></tr>
+        <tr><td>Koe</td><td>You (one person)</td></tr>
+        <tr><td>Ia</td><td>He / she</td></tr>
+        <tr><td>Māua</td><td>We two (not including you)</td></tr>
+        <tr><td>Tāua</td><td>We two (including you)</td></tr>
+        <tr><td>Kōrua</td><td>You two</td></tr>
+        <tr><td>Rāua</td><td>They two</td></tr>
+        <tr><td>Mātou</td><td>We three+ (not including you)</td></tr>
+        <tr><td>Tātou</td><td>We all (including you)</td></tr>
+        <tr><td>Koutou</td><td>You three+</td></tr>
+        <tr><td>Rātou</td><td>They three+</td></tr>
+      </table>
+      <div class="highlight">
+        <p>Māori has dual (two people) AND plural (three+) forms. It also distinguishes inclusive (including the listener) from exclusive (not including the listener).</p>
+      </div>
+      <h3>Possessives — tōku vs tāku</h3>
+      <p>Māori has two types of possession:</p>
+      <div class="example">
+        <p class="label">A-class vs O-class possession</p>
+        <p><strong>Tāku</strong> (a-class) — things you can control, acquire, or create: food, clothing, work, pets</p>
+        <p><strong>Tōku</strong> (o-class) — things you belong to or that are part of you: parents, body parts, feelings, whakapapa, land</p>
+        <p><em>Tāku pene</em> — my pen &nbsp; | &nbsp; <em>Tōku māmā</em> — my mum</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Would you say "tāku whānau" or "tōku whānau" (my family)?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>Tōku whānau</strong> — family is o-class because you belong to your family (it's not something you acquire or control).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. NUMBERS -->
+    <div class="lesson-card">
+      <h2>3. Ngā tau — Numbers</h2>
+      <h3>Numbers 1–10</h3>
+      <table class="vocab-table">
+        <tr><td>Tahi</td><td>1</td></tr>
+        <tr><td>Rua</td><td>2</td></tr>
+        <tr><td>Toru</td><td>3</td></tr>
+        <tr><td>Whā</td><td>4</td></tr>
+        <tr><td>Rima</td><td>5</td></tr>
+        <tr><td>Ono</td><td>6</td></tr>
+        <tr><td>Whitu</td><td>7</td></tr>
+        <tr><td>Waru</td><td>8</td></tr>
+        <tr><td>Iwa</td><td>9</td></tr>
+        <tr><td>Tekau</td><td>10</td></tr>
+      </table>
+      <h3>Building bigger numbers</h3>
+      <div class="example">
+        <p class="label">Pattern</p>
+        <p><strong>Tekau mā tahi</strong> — 11 (ten and one)</p>
+        <p><strong>Tekau mā rima</strong> — 15</p>
+        <p><strong>Rua tekau</strong> — 20 (two tens)</p>
+        <p><strong>Rua tekau mā toru</strong> — 23</p>
+        <p><strong>Toru tekau</strong> — 30</p>
+        <p><strong>Kotahi rau</strong> — 100</p>
+      </div>
+      <div class="highlight">
+        <p>"Mā" means "and" when joining tens and ones. For multiples of ten, the number comes before "tekau".</p>
+      </div>
+      <h3>Days of the week — Ngā rā o te wiki</h3>
+      <table class="vocab-table">
+        <tr><td>Rāhina</td><td>Monday</td></tr>
+        <tr><td>Rātū</td><td>Tuesday</td></tr>
+        <tr><td>Rāapa</td><td>Wednesday</td></tr>
+        <tr><td>Rāpare</td><td>Thursday</td></tr>
+        <tr><td>Rāmere</td><td>Friday</td></tr>
+        <tr><td>Rāhoroi</td><td>Saturday</td></tr>
+        <tr><td>Rātapu</td><td>Sunday</td></tr>
+      </table>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>How do you say 47 in te reo Māori?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>Whā tekau mā whitu</strong> — four tens and seven.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. WHĀNAU & BODY -->
+    <div class="lesson-card">
+      <h2>4. Te whānau me te tinana — Family &amp; body</h2>
+      <h3>Whānau — Family</h3>
+      <table class="vocab-table">
+        <tr><td>Māmā / Whaea</td><td>Mum / Mother</td></tr>
+        <tr><td>Pāpā / Matua</td><td>Dad / Father</td></tr>
+        <tr><td>Tungāne</td><td>Brother (of a female)</td></tr>
+        <tr><td>Tuakana</td><td>Older sibling (same gender)</td></tr>
+        <tr><td>Teina</td><td>Younger sibling (same gender)</td></tr>
+        <tr><td>Tuahine</td><td>Sister (of a male)</td></tr>
+        <tr><td>Kuia / Kui</td><td>Grandmother</td></tr>
+        <tr><td>Koroua / Koro</td><td>Grandfather</td></tr>
+        <tr><td>Mokopuna</td><td>Grandchild</td></tr>
+        <tr><td>Tamaiti</td><td>Child</td></tr>
+        <tr><td>Tamariki</td><td>Children</td></tr>
+      </table>
+      <div class="highlight">
+        <p>In te reo Māori, sibling terms depend on the gender of the speaker AND whether the sibling is older or younger. There is no single word for "brother" or "sister".</p>
+      </div>
+      <h3>Te tinana — The body</h3>
+      <table class="vocab-table">
+        <tr><td>Māhunga / Ūpoko</td><td>Head</td></tr>
+        <tr><td>Karu / Whatu</td><td>Eye(s)</td></tr>
+        <tr><td>Taringa</td><td>Ear(s)</td></tr>
+        <tr><td>Ihu</td><td>Nose</td></tr>
+        <tr><td>Waha / Māngai</td><td>Mouth</td></tr>
+        <tr><td>Ringa</td><td>Hand / arm</td></tr>
+        <tr><td>Waewae</td><td>Leg / foot</td></tr>
+        <tr><td>Puku</td><td>Stomach</td></tr>
+        <tr><td>Tuarā</td><td>Back</td></tr>
+      </table>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>If you are a boy and you want to say "my sister", which word do you use — tuahine or tungāne?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>Tuahine</strong> — this means "sister of a male". Tungāne means "brother of a female".</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. SENTENCE STRUCTURE -->
+    <div class="lesson-card">
+      <h2>5. Ngā rerenga kōrero — Sentence structures</h2>
+      <p>Māori sentences follow a different word order from English. The most important pattern to learn is <strong>Verb–Subject–Object</strong>.</p>
+      <h3>Present tense — Kei te</h3>
+      <div class="example">
+        <p class="label">Pattern: Kei te + verb + subject</p>
+        <p><strong>Kei te kai au.</strong> — I am eating.</p>
+        <p><strong>Kei te mahi ia.</strong> — He/she is working.</p>
+        <p><strong>Kei te ako mātou.</strong> — We are learning.</p>
+      </div>
+      <h3>Past tense — I</h3>
+      <div class="example">
+        <p class="label">Pattern: I + verb + subject</p>
+        <p><strong>I haere au ki te kura.</strong> — I went to school.</p>
+        <p><strong>I kai rātou.</strong> — They (3+) ate.</p>
+      </div>
+      <h3>Future tense — Ka</h3>
+      <div class="example">
+        <p class="label">Pattern: Ka + verb + subject</p>
+        <p><strong>Ka haere au āpōpō.</strong> — I will go tomorrow.</p>
+        <p><strong>Ka tīmata te hui.</strong> — The meeting will begin.</p>
+      </div>
+      <h3>Location — Kei</h3>
+      <div class="example">
+        <p class="label">Pattern: Kei + location + subject</p>
+        <p><strong>Kei te kura au.</strong> — I am at school.</p>
+        <p><strong>Kei hea koe?</strong> — Where are you?</p>
+        <p><strong>Kei konei ia.</strong> — He/she is here.</p>
+      </div>
+      <div class="highlight">
+        <p>Notice "Kei te" (before a verb) means "is doing" but "Kei" (before a place) means "is at". Context matters!</p>
+      </div>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>How would you say "She is reading" in te reo Māori?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p><strong>Kei te pānui ia.</strong> — "Kei te" (present tense marker) + "pānui" (read) + "ia" (she).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. QUESTIONS & EVERYDAY PHRASES -->
+    <div class="lesson-card">
+      <h2>6. Ngā pātai me ngā kupu o ia rā — Questions &amp; everyday phrases</h2>
+      <h3>Question words</h3>
+      <table class="vocab-table">
+        <tr><td>Aha?</td><td>What?</td></tr>
+        <tr><td>Wai?</td><td>Who?</td></tr>
+        <tr><td>Hea?</td><td>Where?</td></tr>
+        <tr><td>Āhea?</td><td>When? (future)</td></tr>
+        <tr><td>Nōnahea?</td><td>When? (past)</td></tr>
+        <tr><td>Pēhea?</td><td>How? / What is it like?</td></tr>
+        <tr><td>E hia?</td><td>How many?</td></tr>
+        <tr><td>He aha te take?</td><td>Why? / What is the reason?</td></tr>
+      </table>
+      <h3>Common questions</h3>
+      <div class="example">
+        <p class="label">Useful patterns</p>
+        <p><strong>Kei te pēhea koe?</strong> — How are you?</p>
+        <p><strong>Kei te pai au.</strong> — I am good/well.</p>
+        <p><strong>Ko wai tōu ingoa?</strong> — What is your name?</p>
+        <p><strong>Ko wai tōu whaea?</strong> — Who is your mother?</p>
+        <p><strong>He aha tēnei?</strong> — What is this?</p>
+        <p><strong>He aha tērā?</strong> — What is that?</p>
+        <p><strong>E hia ngā tamariki?</strong> — How many children?</p>
+      </div>
+      <h3>Everyday phrases</h3>
+      <table class="vocab-table">
+        <tr><td>Āe</td><td>Yes</td></tr>
+        <tr><td>Kāo</td><td>No</td></tr>
+        <tr><td>Kei te pai</td><td>It's good / OK / I'm fine</td></tr>
+        <tr><td>Ka pai</td><td>Good / well done</td></tr>
+        <tr><td>Tino pai</td><td>Very good</td></tr>
+        <tr><td>Aroha mai</td><td>Sorry / excuse me</td></tr>
+        <tr><td>Mauri ora</td><td>A greeting of life force / well-being</td></tr>
+        <tr><td>Ngā mihi nui</td><td>Many thanks / best regards</td></tr>
+        <tr><td>Kia kaha</td><td>Be strong / stay strong</td></tr>
+        <tr><td>Āpōpō</td><td>Tomorrow</td></tr>
+        <tr><td>Inanahi</td><td>Yesterday</td></tr>
+        <tr><td>Ināianei</td><td>Now</td></tr>
+      </table>
+      <h3>Classroom phrases</h3>
+      <table class="vocab-table">
+        <tr><td>E tū</td><td>Stand up</td></tr>
+        <tr><td>E noho</td><td>Sit down</td></tr>
+        <tr><td>Whakarongo mai</td><td>Listen</td></tr>
+        <tr><td>Titiro mai</td><td>Look here</td></tr>
+        <tr><td>Kia āta whakaaro</td><td>Think carefully</td></tr>
+      </table>
+      <div class="try-it">
+        <p class="label">Try it</p>
+        <p>Someone asks you "Kei te pēhea koe?" — what does this mean, and how would you respond?</p>
+        <button class="reveal-btn" onclick="reveal(this)">Show answer</button>
+        <div class="answer">
+          <p>It means <strong>"How are you?"</strong>. You could respond: <strong>"Kei te pai au, ngā mihi"</strong> (I'm good, thanks).</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════ QUIZ TAB ═══════════════════ -->
+  <div id="tab-quiz" class="tab-content">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="prog-label">0 of 20 checked</span>
+        <span id="score-label">Score: 0%</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+
+    <div id="quiz-root"></div>
+
+    <div class="controls">
+      <div class="score-display">Score: <strong id="live-score">&mdash;</strong></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn" onclick="checkAll()">Check all</button>
+        <button class="btn primary" onclick="resetAll()">Retake quiz</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelector('.tab[onclick*="' + name + '"]').classList.add('active');
+}
+
+function reveal(btn) {
+  const ans = btn.nextElementSibling;
+  ans.classList.toggle('show');
+  btn.textContent = ans.classList.contains('show') ? 'Hide answer' : 'Show answer';
+}
+
+const ALL_QUESTIONS = [
+  // ── GREETINGS & INTRODUCTIONS ──
+  {topic:"Greetings & introductions",q:"Which of the following are correct greetings in te reo Māori?",hint:"Think about how many people you are greeting.",options:["'Kia ora' is a greeting to one person","'Tēnā kōrua' is a formal greeting to two people","'Kia ora koutou' is used for three or more people","'Mōrena' means good afternoon","'Tēnā koe' is casual slang","'Haere rā' means goodbye to someone leaving"],correct:[0,1,2,5]},
+  {topic:"Greetings & introductions",q:"You are greeting your teacher (one person) formally. Which greeting should you use?",hint:"'Tēnā' is the formal greeting — match it to the right pronoun.",options:["Kia ora koutou","Tēnā koe","Tēnā kōrua","Mōrena koutou"],correct:[1]},
+  {topic:"Greetings & introductions",q:"In a mihimihi (introduction), 'Ko Tupara tōku ingoa' means:",hint:"'Ko' introduces a name, 'tōku ingoa' means 'my name'.",options:["Tupara is my friend","My name is Tupara","Tupara is at school","I like Tupara"],correct:[1]},
+
+  // ── PRONOUNS ──
+  {topic:"Pronouns & possession",q:"Which of the following correctly describe Māori pronouns?",hint:"Māori distinguishes singular, dual (two), and plural (three+).",options:["'Koe' means 'you' (one person)","'Kōrua' means 'you' (two people)","'Ia' means 'we'","'Tātou' means 'we all' (including the listener)","'Rāua' means 'they two'","'Mātou' includes the person you are talking to"],correct:[0,1,3,4]},
+  {topic:"Pronouns & possession",q:"Which of these use the correct possessive (tōku vs tāku)?",hint:"Tōku (o-class) = things you belong to. Tāku (a-class) = things you control or acquire.",options:["Tōku māmā (my mum)","Tāku whānau (my family)","Tāku pene (my pen)","Tōku pukapuka (my book)","Tōku maunga (my mountain)","Tāku kaiako (my teacher)"],correct:[0,2,4]},
+  {topic:"Pronouns & possession",q:"'Māua' and 'Tāua' both mean 'we two'. What is the difference?",hint:"One includes the listener, the other does not.",options:["Māua excludes the listener, Tāua includes the listener","They mean exactly the same thing","Māua is formal, Tāua is casual","Māua includes the listener, Tāua excludes the listener"],correct:[0]},
+
+  // ── NUMBERS ──
+  {topic:"Numbers & days",q:"Match the numbers: which of these are correct?",hint:"Tekau = 10, mā = and.",options:["Whā = 4","Ono = 7","Tekau mā rua = 12","Rua tekau = 20","Iwa = 8","Rima = 5"],correct:[0,2,3,5]},
+  {topic:"Numbers & days",q:"How do you say '35' in te reo Māori?",hint:"It's [number] tekau mā [number].",options:["Toru tekau mā rima","Rima tekau mā toru","Tekau toru mā rima","Toru mā rima tekau"],correct:[0]},
+  {topic:"Numbers & days",q:"Which of the following days of the week are correctly matched?",hint:"All days start with 'Rā' — think about the Māori week.",options:["Rāhina = Monday","Rātū = Thursday","Rāmere = Friday","Rāhoroi = Saturday","Rāapa = Sunday","Rātapu = Sunday"],correct:[0,2,3,5]},
+
+  // ── FAMILY & BODY ──
+  {topic:"Family & body",q:"Which of the following whānau (family) terms are correct?",hint:"Māori sibling terms depend on gender of the speaker.",options:["Kuia = grandmother","Matua = father","Mokopuna = uncle","Tamariki = children","Tuahine = sister (of a male)","Koroua = mother"],correct:[0,1,3,4]},
+  {topic:"Family & body",q:"Match the body parts: which of these are correct?",hint:"Te tinana = the body.",options:["Māhunga = head","Ringa = hand/arm","Waewae = stomach","Taringa = ear","Ihu = eye","Puku = stomach"],correct:[0,1,3,5]},
+  {topic:"Family & body",q:"If a girl wants to refer to her brother, which term does she use?",hint:"Think about the gender of the speaker.",options:["Tuahine","Tungāne","Teina","Tuakana"],correct:[1]},
+
+  // ── SENTENCE STRUCTURES ──
+  {topic:"Sentence structures",q:"'Kei te kai au' means 'I am eating'. Which tense marker shows this is present tense?",hint:"The tense marker comes before the verb.",options:["I","Ka","Kei te","Ko"],correct:[2]},
+  {topic:"Sentence structures",q:"Which of these sentences are grammatically correct in te reo Māori?",hint:"The pattern is: tense marker + verb + subject.",options:["Kei te mahi ia (He/she is working)","I haere au ki te kura (I went to school)","Au kei te kai (I am eating)","Ka tīmata te hui (The meeting will begin)","Te mahi kei ia (She works)","Kei te kura au (I am at school)"],correct:[0,1,3,5]},
+  {topic:"Sentence structures",q:"How would you say 'I went to the shop' in te reo Māori?",hint:"Past tense uses 'I' + verb + subject + ki + place. Shop = toa.",options:["I haere au ki te toa","Kei te haere au ki te toa","Ka haere au ki te toa","Ko au ki te toa"],correct:[0]},
+  {topic:"Sentence structures",q:"What is the difference between 'Kei te kura au' and 'Kei te ako au'?",hint:"'Kei' before a place = location. 'Kei te' before a verb = action.",options:["'Kei te kura au' = I am at school. 'Kei te ako au' = I am learning.","They both mean 'I am at school'","'Kei te kura au' = I am learning. 'Kei te ako au' = I am at school.","They both mean 'I am learning'"],correct:[0]},
+
+  // ── QUESTIONS & PHRASES ──
+  {topic:"Questions & phrases",q:"Match the question words to their English meanings:",hint:"These are the building blocks for asking questions in te reo Māori.",options:["Aha = What","Wai = Who","Hea = Where","Pēhea = Why","E hia = How many","Āhea = Where"],correct:[0,1,2,4]},
+  {topic:"Questions & phrases",q:"Someone says 'Kei te pēhea koe?' to you. What are they asking?",hint:"'Pēhea' means 'how / what is it like'.",options:["What is your name?","Where are you going?","How are you?","How old are you?"],correct:[2]},
+  {topic:"Questions & phrases",q:"Which of the following everyday phrases are correctly translated?",hint:"Think about phrases you hear in the classroom and in daily life.",options:["Ka pai = Good / well done","Aroha mai = Sorry / excuse me","Kia kaha = Goodbye","Āe = Yes","Inanahi = Tomorrow","Kāo = No"],correct:[0,1,3,5]},
+  {topic:"Questions & phrases",q:"Your teacher says 'E tū!' then 'Whakarongo mai!' — what should you do?",hint:"These are classroom commands.",options:["Sit down, then read your book","Stand up, then listen","Look here, then sit down","Stand up, then write"],correct:[1]},
+];
+
+const state = ALL_QUESTIONS.map(() => ({ selected: new Set(), checked: false }));
+
+function optClass(qi, oi) {
+  const s = state[qi];
+  if (!s.checked) return s.selected.has(oi) ? 'opt selected' : 'opt';
+  const isCorrect = ALL_QUESTIONS[qi].correct.includes(oi);
+  const wasSelected = s.selected.has(oi);
+  if (wasSelected && isCorrect)  return 'opt correct disabled';
+  if (wasSelected && !isCorrect) return 'opt wrong disabled';
+  if (!wasSelected && isCorrect) return 'opt missed disabled';
+  return 'opt disabled';
+}
+
+function optIcon(qi, oi) {
+  const s = state[qi];
+  if (!s.checked) return s.selected.has(oi) ? '&#10003;' : '';
+  const isCorrect = ALL_QUESTIONS[qi].correct.includes(oi);
+  const wasSelected = s.selected.has(oi);
+  if (wasSelected && isCorrect)  return '&#10003;';
+  if (wasSelected && !isCorrect) return '&#10005;';
+  if (!wasSelected && isCorrect) return '!';
+  return '';
+}
+
+function toggleOpt(qi, oi) {
+  if (state[qi].checked) return;
+  state[qi].selected.has(oi) ? state[qi].selected.delete(oi) : state[qi].selected.add(oi);
+  renderQuestion(qi);
+}
+
+function checkQ(qi) {
+  if (state[qi].checked) return;
+  state[qi].checked = true;
+  renderQuestion(qi);
+  updateProgress();
+}
+
+function checkAll() {
+  state.forEach((s, i) => { if (!s.checked) { s.checked = true; renderQuestion(i); }});
+  updateProgress();
+}
+
+function resetAll() {
+  state.forEach(s => { s.selected.clear(); s.checked = false; });
+  buildQuiz();
+  updateProgress();
+}
+
+function computeScore() {
+  let correct = 0, total = 0;
+  ALL_QUESTIONS.forEach((q, qi) => {
+    if (!state[qi].checked) return;
+    q.options.forEach((_, oi) => {
+      total++;
+      const isCorrect = q.correct.includes(oi);
+      const wasSelected = state[qi].selected.has(oi);
+      if (isCorrect === wasSelected) correct++;
+    });
+  });
+  return total === 0 ? 0 : Math.round(100 * correct / total);
+}
+
+function updateProgress() {
+  const checked = state.filter(s => s.checked).length;
+  const pct = Math.round(100 * checked / ALL_QUESTIONS.length);
+  const score = computeScore();
+  document.getElementById('prog-label').textContent = checked + ' of ' + ALL_QUESTIONS.length + ' checked';
+  document.getElementById('score-label').textContent = 'Score: ' + (checked ? score + '%' : '0%');
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('live-score').textContent = checked ? score + '%' : '\u2014';
+}
+
+function renderQuestion(qi) {
+  const el = document.getElementById('q-' + qi);
+  if (!el) return;
+  const q = ALL_QUESTIONS[qi];
+  let html = '<div class="qnum">Question ' + (qi + 1) + '</div>';
+  html += '<div class="qtext">' + q.q + '</div>';
+  html += '<div class="hint">' + q.hint + '</div>';
+  html += '<div class="options">';
+  q.options.forEach((o, oi) => {
+    html += '<div class="' + optClass(qi, oi) + '" onclick="toggleOpt(' + qi + ',' + oi + ')">';
+    html += '<span class="cb">' + optIcon(qi, oi) + '</span>' + o + '</div>';
+  });
+  html += '</div>';
+  html += '<button class="check-btn' + (state[qi].checked ? ' done' : '') + '" onclick="checkQ(' + qi + ')">' + (state[qi].checked ? 'Checked' : 'Check answer') + '</button>';
+  el.innerHTML = html;
+}
+
+function buildQuiz() {
+  const root = document.getElementById('quiz-root');
+  let html = '';
+  let currentTopic = '';
+  ALL_QUESTIONS.forEach((q, qi) => {
+    if (q.topic !== currentTopic) {
+      currentTopic = q.topic;
+      html += '<div class="topic-label">' + currentTopic + '</div>';
+    }
+    html += '<div class="qcard" id="q-' + qi + '"></div>';
+  });
+  root.innerHTML = html;
+  ALL_QUESTIONS.forEach((_, qi) => renderQuestion(qi));
+}
+
+buildQuiz();
+updateProgress();
+</script>
+</body>
+</html>
